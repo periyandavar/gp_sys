@@ -1,0 +1,39 @@
+{
+    "name": "gp/sys",
+    "description": "A simple PHP MVC framework with ORM, autoload, DI, Validator, etc support for simple application",
+    "type": "library",
+    "require": {
+        "php": "^8.0",
+        "gp/loader": "^1.1",
+        "gp/logger": "^0.0.2",
+        "gp/router": "^1.0",
+        "gp/dbms": "^1.0",
+        "gp/validator": "^1.0",
+        "fpdf/fpdf": "^1.86"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.73",
+        "phpunit/phpunit": "^9.6",
+        "phpstan/phpstan": "^2.1",
+        "mockery/mockery": "^1.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Periyandavar Ganesh",
+            "email": "vickyperiyandavar@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "System\\": "src\\"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/",
+            "System\\": "src//"
+        }
+    }
+}
