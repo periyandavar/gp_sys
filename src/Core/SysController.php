@@ -67,7 +67,7 @@ class SysController
      * @param BaseModel   $model   model class object to intialize $this->model
      * @param BaseService $service service class object to intialize $this->service
      */
-    public function __construct($model = null, $service = null, $autoload = null)
+    public function __construct($model = null, $service = null)
     {
         $this->module = Container::get('module');
         $this->model = $model;

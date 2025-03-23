@@ -1,10 +1,10 @@
 <?php
 
+use Loader\Config\ConfigLoader;
+use Logger\Log;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use System\Core\Session;
-use Loader\Config\ConfigLoader;
-use Logger\Log;
 
 class SessionTest extends TestCase
 {

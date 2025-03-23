@@ -2,6 +2,7 @@
 
 namespace System\Core;
 
+use Database\Database;
 use Database\DatabaseFactory;
 use Database\DBQuery;
 use Loader\Config\ConfigLoader;
@@ -17,7 +18,7 @@ class BaseModel
     /**
      * Database connection variable
      *
-     * @var ?Database\Database $db
+     * @var ?Database $db
      */
     protected $db;
 

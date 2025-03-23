@@ -41,7 +41,7 @@ class BaseModule
 
     public function addRoutes()
     {
-        $app_dir = defined("APP_DIR") ? APP_DIR : '';
+        $app_dir = defined('APP_DIR') ? APP_DIR : '';
         $routeFile = $app_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'module' . DIRECTORY_SEPARATOR . "{$this->name}" . DIRECTORY_SEPARATOR . 'routes.php';
         $routes = [];
         if (file_exists($routeFile)) {
@@ -92,7 +92,7 @@ class BaseModule
 
     public function setUpServices()
     {
-        $app_dir = defined("APP_DIR") ? APP_DIR : '';
+        $app_dir = defined('APP_DIR') ? APP_DIR : '';
         $serviceFile = $app_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . "{$this->name}" . DIRECTORY_SEPARATOR . 'services.php';
         $services = [];
         if (file_exists($serviceFile)) {

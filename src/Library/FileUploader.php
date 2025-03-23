@@ -6,6 +6,8 @@
 
 namespace System\Library;
 
+use Loader\Config\ConfigLoader;
+
 /**
  * FileUploader used to validate and handle file upload operations
  * User defined Error controller should implement this interface
@@ -23,7 +25,7 @@ class FileUploader
     /**
      * Maximum file size of the uploaded file
      *
-     * @var string maxFileSize
+     * @var int maxFileSize
      */
     private $_maxFileSize = 2000000;
 
@@ -132,7 +134,7 @@ class FileUploader
             return false;
         }
         $destination = $destination
-            ?? ($config['upload'] = '' ? 'upload' : $config['upload']);
+            ?? ($config['upload'] == '' ? 'upload' : $config['upload']);
         $destination .= '/' . ($subfolder ?? '');
         $destination .= '/' . $filename;
         if ($this->validateFile($file)) {
