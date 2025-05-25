@@ -15,6 +15,8 @@ class FrameworkException extends \Exception
 {
     public const UNKNOWN_ERROR = 100;
     public const INVALID_SESSION_ERROR = 101;
+    public const DB_CONNECTION_ERROR = 102;
+
     /**
      * Instantiate new FrameworkException instance
      *

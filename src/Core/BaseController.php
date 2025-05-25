@@ -26,15 +26,34 @@ class BaseController extends SysController
     final protected function loadView(string $file, ?array $data = null)
     {
         $path = $this->config->get('view') . '' . $file . '.php';
+
         if (file_exists($path)) {
+            $this->includeView($path, $data);
+
+            return;
+        }
+
+        $path = rtrim($this->module->getBasePath(), '/') . '//View//' . $file . '.php';
+        if (file_exists($path)) {
+            $this->includeView($path, $data);
+
+            return;
+        }
+
+        $this->log->warning("Unable to load the $file view from $path");
+    }
+
+    public function includeView($file, $data)
+    {
+        if (file_exists($file)) {
             if ($data != null) {
                 foreach ($data as $key => $value) {
                     $$key = $value;
                 }
             }
-            include_once $path;
+            include_once $file;
         } else {
-            $this->log->debug("Unable to load the $file view");
+            $this->log->warning("Unable to load the $file view  file");
         }
     }
 

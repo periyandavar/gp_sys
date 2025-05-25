@@ -3,9 +3,7 @@
 namespace System\Core;
 
 use Database\Database;
-use Database\DatabaseFactory;
 use Database\DBQuery;
-use Loader\Config\ConfigLoader;
 use Logger\Log;
 
 /**
@@ -29,10 +27,12 @@ class BaseModel
      */
     public function __construct()
     {
-        $this->db = DatabaseFactory::get();
-        if (!$this->db) {
-            $dbConfig = ConfigLoader::getConfig('db')->getAll();
-            $this->db = DatabaseFactory::create($dbConfig);
+        $this->db = Utility::getDb();
+        if (! $this->db) {
+            throw new FrameworkException(
+                'Database connection is not established. Please check your database configuration.',
+                FrameworkException::DB_CONNECTION_ERROR
+            );
         }
 
         $this->dbQuery = new DBQuery();
