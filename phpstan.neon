@@ -4,8 +4,6 @@ parameters:
         - %currentWorkingDirectory%/src  # Adjust this path to your source code directory
     excludePaths:
         - %currentWorkingDirectory%/vendor  # Exclude vendor directory from analysis
-    ignoreErrors:
-        - '#Constant APP_DIR not found#'
 
 includes:
     - vendor/phpstan/phpstan/conf/bleedingEdge.neon  # Optional: include bleeding edge rules if needed

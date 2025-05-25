@@ -28,4 +28,14 @@ final class Constants
     public const ENV_DEVELOPMENT = 'development';
 
     public const METHOD_PATCH = 'patch';
+
+    public const TESTING_ENVS = [
+        self::ENV_DEV,
+        self::ENV_TESTING,
+        self::ENV_DEVELOPMENT
+    ];
+
+    public const CONFIG = 'config';
+    public const ENV = 'env';
+    public const DB = 'db';
 }

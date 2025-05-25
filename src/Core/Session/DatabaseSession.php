@@ -35,7 +35,8 @@ class DatabaseSession implements \SessionHandlerInterface
     public function connect()
     {
         $config = ConfigLoader::getConfig('db')->getAll();
-        $this->db = DatabaseFactory::create($config);
+        DatabaseFactory::setUpConfig($config);
+        $this->db = DatabaseFactory::get();
     }
 
     /**
@@ -77,7 +78,7 @@ class DatabaseSession implements \SessionHandlerInterface
      *
      * @return string
      */
-    public function read($sessionId)
+    public function read($sessionId): string
     {
         $this->db->select('data')
             ->from($this->_table)
@@ -88,7 +89,7 @@ class DatabaseSession implements \SessionHandlerInterface
                 return '';
             }
 
-            return ($data = $this->security->decrypt($row->data)) ? $data : '';
+            return ($data = $this->security->decrypt($row->data)) ? (string) $data : '';
         } else {
             return '';
         }
@@ -102,7 +103,7 @@ class DatabaseSession implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function write($sessionId, $data)
+    public function write($sessionId, $data): bool
     {
         $access = time();
         $data = $this->security->encrypt($data);
@@ -133,7 +134,7 @@ class DatabaseSession implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function destroy($sessionId)
+    public function destroy($sessionId): bool
     {
         $this->db->delete($this->_table, ['sessionId', '=', $sessionId]);
 

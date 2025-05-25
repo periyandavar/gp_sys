@@ -15,10 +15,15 @@ class BaseModule
     private $obj = [];
     private $loader = null;
 
+    private $base_path = '';
+
     public function __construct($name)
     {
         Log::getInstance()->info('Initializing the Moudle class : ' . static::class);
         $this->name = $name;
+        $app_dir = defined('APP_DIR') ? APP_DIR : '';
+        $module_folder = ucfirst($this->name);
+        $this->base_path = $app_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Module' . DIRECTORY_SEPARATOR . "{$module_folder}" . DIRECTORY_SEPARATOR ;
         $this->addRoutes();
         $this->setUpServices();
         $this->setupAutoLoad();
@@ -39,19 +44,12 @@ class BaseModule
         return $result;
     }
 
-    public function addRoutes()
+    public function addRoutes($routeFile = '')
     {
-        $app_dir = defined('APP_DIR') ? APP_DIR : '';
-        $routeFile = $app_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'module' . DIRECTORY_SEPARATOR . "{$this->name}" . DIRECTORY_SEPARATOR . 'routes.php';
+        $routeFile = empty($routeFile) ? $this->base_path . 'routes.php' : $routeFile;
         $routes = [];
         if (file_exists($routeFile)) {
             $routes = require_once $routeFile;
-        }
-
-        if (empty($routes)) {
-            Log::getInstance()->info('No routes found, skipping loading routes...');
-
-            return;
         }
 
         if (!is_array($routes)) {
@@ -60,10 +58,18 @@ class BaseModule
             return;
         }
 
-        // $prefix = str_replace('\\Module', '', static::class);
-        $prefix = substr(static::class, 0, -(strlen('\\Module')));
+        if (empty($routes)) {
+            Log::getInstance()->info('No routes found, skipping loading routes...' . $routeFile);
 
-        $prefix = $prefix . '\\Controller';
+            return;
+        }
+
+        $class_name = static::class;
+        $prefix = '';
+        if ($class_name != BaseModule::class) {
+            $prefix = substr($class_name, 0, -(strlen('\\Module'))) . '\\Controller';
+        }
+
         Log::getInstance()->info('setting the prefix for routes', ['module' => $this->name, 'prefix' => $prefix]);
         foreach ($routes as $name => $route) {
             if ($route instanceof Route) {
@@ -72,6 +78,7 @@ class BaseModule
                     $name = $this->name . '.' . str_replace('/', '.', $route->getExpression());
                     $route->setName(strtolower($name));
                 }
+
                 Router::addRoute($route);
             }
 
@@ -90,10 +97,9 @@ class BaseModule
         }
     }
 
-    public function setUpServices()
+    public function setUpServices($serviceFile = '')
     {
-        $app_dir = defined('APP_DIR') ? APP_DIR : '';
-        $serviceFile = $app_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . "{$this->name}" . DIRECTORY_SEPARATOR . 'services.php';
+        $serviceFile = empty($serviceFile) ? $this->base_path . 'services.php' : $serviceFile;
         $services = [];
         if (file_exists($serviceFile)) {
             $services = require_once $serviceFile;
@@ -118,10 +124,9 @@ class BaseModule
         Log::getInstance()->info('Services are loaded...');
     }
 
-    public function setupAutoLoad()
+    public function setupAutoLoad($autoloadFile = '')
     {
-        $app_dir = defined(APP_DIR) ? APP_DIR : '';
-        $autoloadFile = $app_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . "{$this->name}" . DIRECTORY_SEPARATOR . 'autoload.php';
+        $autoloadFile = empty($autoloadFile) ? $this->base_path . 'autoload.php' : $autoloadFile;
         $autoloads = [];
         if (file_exists($autoloadFile)) {
             $autoloads = require_once $autoloadFile;
@@ -169,5 +174,10 @@ class BaseModule
     public function __isset($name)
     {
         return isset($this->obj[$name]);
+    }
+
+    public function getBasePath()
+    {
+        return $this->base_path;
     }
 }

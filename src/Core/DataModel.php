@@ -24,4 +24,9 @@ class DataModel extends Model
             'deletionToken' => time()
         ];
     }
+
+    public static function getTableName()
+    {
+        return strtolower(basename(str_replace('\\', '/', static::class)));
+    }
 }
