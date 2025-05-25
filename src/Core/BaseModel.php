@@ -3,9 +3,7 @@
 namespace System\Core;
 
 use Database\Database;
-use Database\DatabaseFactory;
 use Database\DBQuery;
-use Loader\Config\ConfigLoader;
 use Logger\Log;
 
 /**

@@ -110,7 +110,7 @@ final class Utility
     /**
      * Get DB
      *
-     * @param  string   $name
+     * @param  string        $name
      * @return Database|null
      */
     public static function getDb(string $name = 'default')

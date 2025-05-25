@@ -29,12 +29,14 @@ class BaseController extends SysController
 
         if (file_exists($path)) {
             $this->includeView($path, $data);
+
             return;
         }
 
         $path = rtrim($this->module->getBasePath(), '/') . '//View//' . $file . '.php';
         if (file_exists($path)) {
             $this->includeView($path, $data);
+
             return;
         }
 
