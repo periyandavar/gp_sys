@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+use System\App;
+
+require_once __DIR__ . '/index.php';
+
+array_shift($argv);
+$args = $argv;
+
+if ($argc < 2) {
+    echo "Usage: php run <command>\n";
+    exit(1);
+}
+
+$commandName = reset($argv);
+
+if (empty($commandName)) {
+    echo "No command specified.\n";
+    exit(1);
+}
+
+
+$toolCommands = [
+    'phpstan'      => BASE_DIR .'vendor/bin/phpstan',
+    'cs-fixer'     => BASE_DIR .'vendor/bin/php-cs-fixer',
+    'php-cs-fixer' => BASE_DIR .'vendor/bin/php-cs-fixer',
+    'test'         => BASE_DIR .'vendor/bin/phpunit',
+    'phpunit'      => BASE_DIR .'vendor/bin/phpunit',
+];
+
+$toolCommand = $toolCommands[$commandName] ?? null;
+if (isset($toolCommand)) {
+    array_shift($args);
+    passthru($toolCommand . ' ' . implode(' ', array_map('escapeshellarg', $args)));
+    exit;
+}
+
+
+$action = array_shift($args);
+App::runConsole($action, $args);
+

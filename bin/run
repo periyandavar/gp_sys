@@ -1,0 +1,59 @@
+#!/usr/bin/env php.
+<?php
+
+use System\App;
+use System\Core\Command\Init;
+use System\Core\Constants;
+
+require_once __DIR__ . '/../autoload.php';
+
+define('VALID_REQ', true);
+define('BASE_DIR', __DIR__ . '/../../');
+define('ENV', Constants::ENV_LOCAL);
+define('DS', DIRECTORY_SEPARATOR);
+define('SUPPRESS_SYSTEM_ERRORS', false);
+
+
+array_shift($argv);
+$args = $argv;
+
+if ($argc < 2) {
+    echo "Usage: php run <command>\n";
+    exit(1);
+}
+
+$commandName = reset($argv);
+
+if (empty($commandName)) {
+    echo "No command specified.\n";
+    exit(1);
+}
+
+
+$toolCommands = [
+    'phpstan'      => BASE_DIR .'vendor/bin/phpstan',
+    'cs-fixer'     => BASE_DIR .'vendor/bin/php-cs-fixer',
+    'php-cs-fixer' => BASE_DIR .'vendor/bin/php-cs-fixer',
+    'test'         => BASE_DIR .'vendor/bin/phpunit',
+    'phpunit'      => BASE_DIR .'vendor/bin/phpunit',
+];
+
+$toolCommand = $toolCommands[$commandName] ?? null;
+if (isset($toolCommand)) {
+    array_shift($args);
+    passthru($toolCommand . ' ' . implode(' ', array_map('escapeshellarg', $args)));
+    exit;
+}
+
+if ($commandName != 'init') {
+    echo "Command $commandName is not available to run from this directory.\n";
+    echo "This script is intended to run the init command only which is used to initialize the system.\n";
+    echo "once the system is initialized, you can run commands from the console/run.php script.\n";
+    echo "Please run this command as console/run {$commandName} " . implode(' ', array_map('escapeshellarg', $args)) . "\n";
+    exit(1);
+}
+
+$action = array_shift($args);
+
+$init = new Init();
+$init->execute();

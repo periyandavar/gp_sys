@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Module\{{module}};
+
+class Module extends \System\Core\BaseModule
+{
+    public function __construct()
+    {
+        parent::__construct('{{name}}');
+    }
+}

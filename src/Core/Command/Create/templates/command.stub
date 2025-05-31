@@ -1,0 +1,37 @@
+<?php
+
+namespace System\Core\Command;
+
+use System\Core\Console;
+
+class {{className}} extends Console
+{
+    protected static string $name = '{{name}}';
+    protected string $description = '{{description}}';
+
+    /**
+     * Define short and long options for getopt().
+     */
+    protected function options(): array
+    {
+        return [
+            'help' => [
+                'short' => 'h',
+                'message' => 'prints help message'
+            ]
+        ];
+    }
+
+    /**
+     * Entry point for the command execution.
+     */
+    public function run(): void
+    {
+        if ($this->getOption('h')) {
+            $this->displayHelp();
+            return;
+        }
+
+        // Write your command action here.
+    }
+}
