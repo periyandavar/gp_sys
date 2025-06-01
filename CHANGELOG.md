@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/periyandavar/gp_sys/tree/HEAD)
 
-[Full Changelog](https://github.com/periyandavar/gp_sys/compare/v0.0.0...HEAD)
+[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.1...HEAD)
+
+**Merged pull requests:**
+
+- fix: package update [\#4](https://github.com/periyandavar/gp_sys/pull/4) ([periyandavar](https://github.com/periyandavar))
+
+## [0.0.1](https://github.com/periyandavar/gp_sys/tree/0.0.1) (2025-05-25)
+
+[Full Changelog](https://github.com/periyandavar/gp_sys/compare/v0.0.0...0.0.1)
 
 **Merged pull requests:**
 
