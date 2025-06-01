@@ -61,16 +61,16 @@
         },
         {
             "name": "gp/dbms",
-            "version": "1.0.5",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/periyandavar/gp_dbms",
-                "reference": "8b56f2eba7fdb4e3ad04b335ad4e9d5b934a3e8b"
+                "reference": "5f4315490600973a3c67a761819ee0a727ae6443"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/periyandavar/gp_dbms/zipball/8b56f2eba7fdb4e3ad04b335ad4e9d5b934a3e8b",
-                "reference": "8b56f2eba7fdb4e3ad04b335ad4e9d5b934a3e8b",
+                "url": "https://api.github.com/repos/periyandavar/gp_dbms/zipball/5f4315490600973a3c67a761819ee0a727ae6443",
+                "reference": "5f4315490600973a3c67a761819ee0a727ae6443",
                 "shasum": ""
             },
             "require": {
@@ -101,7 +101,7 @@
                 }
             ],
             "description": "Simple PHP Database tool with QueryParam class supports mysqli and pdo",
-            "time": "2025-05-25T16:49:48+00:00"
+            "time": "2025-06-01T08:32:47+00:00"
         },
         {
             "name": "gp/loader",
