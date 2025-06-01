@@ -373,3 +373,34 @@ The `console/run` script also provides shortcuts for common tools:
 - `php console/run cs-fixer` — Runs PHP CS Fixer
 
 ---
+
+### Contributing
+
+Contributions are welcome! If you would like to contribute to gp_validator, please follow these steps:
+
+- Fork the repository.
+- Create a new branch (git checkout -b feature/- YourFeature).
+- Make your changes and commit them (git commit -m 'Add some feature').
+- Push to the branch (git push origin feature/YourFeature).
+- Open a pull request.
+- Please ensure that your code adheres to the coding standards and includes appropriate tests.
+
+---
+
+## License
+
+This package is licensed under the MIT License. See the [LICENSE](https://github.com/periyandavar/gp_loader/blob/main/LICENSE) file for more information.
+
+---
+
+## Contact
+For questions or issues, please reach out to the development team or open a ticket.
+
+---
+
+
+## Author
+
+- Periyandavar [Github](https://github.com/periyandavar) (<vickyperiyandavar@gmail.com>)
+
+---
