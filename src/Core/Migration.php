@@ -30,7 +30,7 @@ abstract class Migration
     /**
      * set the config values.
      *
-     * @param \Loader\Config\ConfigLoader $config
+     * @param  \Loader\Config\ConfigLoader $config
      * @return void
      */
     public function setConfig(ConfigLoader $config): void
@@ -146,8 +146,8 @@ abstract class Migration
     /**
      * Create table.
      *
-     * @param string $tableName
-     * @param array $columns
+     * @param  string                    $tableName
+     * @param  array                     $columns
      * @throws \InvalidArgumentException
      *
      * @return void
@@ -174,8 +174,8 @@ abstract class Migration
     /**
      * Insert the data
      *
-     * @param string $tableName
-     * @param array $data
+     * @param  string                                    $tableName
+     * @param  array                                     $data
      * @throws \System\Core\Exception\FrameworkException
      * @return void
      */
@@ -194,10 +194,10 @@ abstract class Migration
 
     /**
      * Update the data.
-     * 
-     * @param string $tableName
-     * @param array $data
-     * @param string $where
+     *
+     * @param  string                                    $tableName
+     * @param  array                                     $data
+     * @param  string                                    $where
      * @throws \System\Core\Exception\FrameworkException
      * @return void
      */
@@ -215,9 +215,9 @@ abstract class Migration
 
     /**
      * Delete table entry.
-     * 
-     * @param string $tableName
-     * @param string $where
+     *
+     * @param  string                                    $tableName
+     * @param  string                                    $where
      * @throws \System\Core\Exception\FrameworkException
      * @return void
      */
@@ -233,7 +233,7 @@ abstract class Migration
 
     /**
      * Alter the table.
-     * 
+     *
      * @param string $tableName
      * @param string $alteration
      *
@@ -259,8 +259,8 @@ abstract class Migration
 
     /**
      * Drop table.
-     * 
-     * @param string $tableName
+     *
+     * @param  string $tableName
      * @return void
      */
     public function dropTable(string $tableName): void
@@ -287,7 +287,7 @@ abstract class Migration
 
     /**
      * Return Migration name.
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -299,7 +299,7 @@ abstract class Migration
      * Executes query.
      *
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      *
      * @return void
      */

@@ -47,8 +47,7 @@ class CreateCommand extends Create
 
     private function createCommand(string $name): void
     {
-                $commandsDir = defined('APP_DIR') ? APP_DIR : '';
-        
+        $commandsDir = defined('APP_DIR') ? APP_DIR : '';
 
         if (!is_dir($commandsDir)) {
             $this->error('Console directory does not exist: ' . $commandsDir);

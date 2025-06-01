@@ -5,7 +5,8 @@ parameters:
     excludePaths:
         - %currentWorkingDirectory%/vendor  # Exclude vendor directory from analysis
     ignoreErrors:
-        - '#Constant APP_DIR not found#'
+        - '/Parameter #1 \$callback of function set_exception_handler expects.*/'
+        - '/Parameter #1 \$callback of function set_error_handler expects.*/'
 
 includes:
     - vendor/phpstan/phpstan/conf/bleedingEdge.neon  # Optional: include bleeding edge rules if needed

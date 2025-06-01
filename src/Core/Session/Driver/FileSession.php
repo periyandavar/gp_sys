@@ -4,7 +4,9 @@
  * FileSession Handler
  */
 
-namespace System\Core;
+namespace System\Core\Session\Driver;
+
+use System\Libraray\Security\Security;
 
 /**
  * Custom Session handler
@@ -24,7 +26,7 @@ class FileSession implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function open($savePath, $sessionName)
+    public function open($savePath, $sessionName): bool
     {
         $key = 'bRuD5WYw5wd0rdHR9yLlM6wt2vteuiniQBqE70nAuhU=';
         $iv = '1234567891011121';
@@ -41,7 +43,7 @@ class FileSession implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -70,7 +72,7 @@ class FileSession implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function write($sessId, $data)
+    public function write($sessId, $data): bool
     {
         $data = $this->security->encrypt($data);
 
@@ -86,7 +88,7 @@ class FileSession implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function destroy($sessId)
+    public function destroy($sessId): bool
     {
         $file = "$this->_savePath/$sessId";
         file_exists($file) and unlink($file);
@@ -99,9 +101,9 @@ class FileSession implements \SessionHandlerInterface
      *
      * @param int $maxlifetime Maximum lifetime
      *
-     * @return int|bool
+     * @return int
      */
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int
     {
         foreach (glob("$this->_savePath/sess_*") as $file) {
             if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
@@ -109,6 +111,6 @@ class FileSession implements \SessionHandlerInterface
             }
         }
 
-        return true;
+        return 1;
     }
 }

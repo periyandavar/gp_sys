@@ -26,6 +26,7 @@ class RestRequest extends Request
     public function getJsonBody(bool $asArray = true)
     {
         $raw = $this->getRawBody();
+
         return json_decode($raw, $asArray);
     }
 
@@ -43,6 +44,7 @@ class RestRequest extends Request
     public function getMethodOverride(): ?string
     {
         $method = $this->post('_method');
+
         return $method ? strtoupper($method) : null;
     }
 }

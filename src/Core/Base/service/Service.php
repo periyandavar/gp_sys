@@ -1,10 +1,5 @@
 <?php
 
-/**
- * BaseService
- * php version 7.3.5
- *
- */
 
 namespace System\Core\Base\Service;
 
@@ -19,7 +14,6 @@ use StdClass;
  */
 class Service
 {
-
     protected $config;
 
     /**

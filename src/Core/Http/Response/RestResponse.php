@@ -4,11 +4,9 @@ namespace System\Core\Http\Response;
 
 class RestResponse extends Response
 {
-
     public function __construct($status = 200, $headers = [], $body = '')
     {
         parent::__construct($status, $headers, $body, static::TYPE_JSON);
-
     }
 
     /**
@@ -48,14 +46,14 @@ class RestResponse extends Response
     /**
  * Send a response for a successful update.
  */
-public function updated($data = null): void
-{
-    if ($data !== null) {
-        $this->json($data, 200);
-    } else {
-        $this->noContent();
+    public function updated($data = null): void
+    {
+        if ($data !== null) {
+            $this->json($data, 200);
+        } else {
+            $this->noContent();
+        }
     }
-}
 
     /**
      * Send an error response in JSON format.

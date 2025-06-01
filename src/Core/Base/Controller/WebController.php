@@ -38,9 +38,9 @@ class WebController extends Controller
      * only files with .php extension are allowed and those files should
      * store on View Folder
      *
-     * @param string     $file filename without extension
-     * @param array $data varaibles to passed to the view
-     * @param bool $newGroup
+     * @param string $file     filename without extension
+     * @param array  $data     varaibles to passed to the view
+     * @param bool   $newGroup
      *
      * @return void
      */
@@ -66,8 +66,8 @@ class WebController extends Controller
     /**
      * This function loads html layout files
      *
-     * @param string $file html filename with extension
-     * @param bool $newGroup
+     * @param string $file     html filename with extension
+     * @param bool   $newGroup
      *
      * @return void
      */
@@ -79,8 +79,8 @@ class WebController extends Controller
     /**
      * This functions include the script file
      *
-     * @param string      $script filename with extension
-     * @param bool $newGroup
+     * @param string $script   filename with extension
+     * @param bool   $newGroup
      *
      * @return void
      */
@@ -92,8 +92,8 @@ class WebController extends Controller
     /**
      * This functions include the style sheet
      *
-     * @param string      $sheet filename with extension
-     * @param bool $newGroup
+     * @param string $sheet    filename with extension
+     * @param bool   $newGroup
      *
      * @return void
      */
@@ -105,8 +105,8 @@ class WebController extends Controller
     /**
      * Adds the Js script on the view
      *
-     * @param string $script Script
-     * @param bool $newGroup
+     * @param string $script   Script
+     * @param bool   $newGroup
      *
      * @return void
      */
@@ -118,8 +118,8 @@ class WebController extends Controller
     /**
      * Adds the CSS style on the view
      *
-     * @param string $style Style
-     * @param bool $newGroup
+     * @param string $style    Style
+     * @param bool   $newGroup
      *
      * @return void
      */

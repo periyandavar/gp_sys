@@ -17,6 +17,7 @@ class WebRequest extends Request
         if (!empty($forwarded)) {
             return explode(',', $forwarded)[0];
         }
+
         return $this->server('REMOTE_ADDR');
     }
 
@@ -43,6 +44,7 @@ class WebRequest extends Request
     {
         $https = $this->server('HTTPS');
         $port = $this->server('SERVER_PORT');
+
         return (!empty($https) && $https !== 'off') || ($port == 443);
     }
 }

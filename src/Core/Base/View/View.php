@@ -239,8 +239,8 @@ class View
 
     /**
      * Add content
-     * 
-     * @param array|ViewContent $content
+     *
+     * @param  array|ViewContent $content
      * @return void
      */
     public function addContent($content): void

@@ -4,7 +4,7 @@
  * Cache
  */
 
-namespace System\Core;
+namespace System\Libraray\Cache;
 
 class Cache
 {

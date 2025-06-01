@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Service;
-
-use System\Library\Curl\Request;
+namespace System\Library\Curl;
 
 class Curl
 {
@@ -24,11 +22,12 @@ class Curl
      *
      * @param string $method
      *
-     * @return \System\Libraray\Curl\Response
+     * @return Response
      */
     public function call(string $method = 'GET')
     {
         $curl = new Request();
+
         return $curl->setUrl($this->getUrl())
             ->setData($this->getData())
             ->setRequestMethod($method)
@@ -38,8 +37,8 @@ class Curl
 
     /**
      * Get call
-     * 
-     * @return \System\Libraray\Curl\Response
+     *
+     * @return Response
      */
     public function get()
     {
@@ -48,8 +47,8 @@ class Curl
 
     /**
      * post call
-     * 
-     * @return \System\Libraray\Curl\Response
+     *
+     * @return Response
      */
     public function post()
     {
@@ -58,8 +57,8 @@ class Curl
 
     /**
      * put call
-     * 
-     * @return \System\Libraray\Curl\Response
+     *
+     * @return Response
      */
     public function put()
     {
@@ -68,27 +67,26 @@ class Curl
 
     /**
      * Delete call
-     * 
-     * @return \System\Libraray\Curl\Response
+     *
+     * @return Response
      */
     public function delete()
     {
         return $this->call('DELETE');
     }
 
-
     public function getUrl()
     {
         return rtrim($this->base_url, '/') . '/' . ltrim($this->end_point, '/');
     }
-    
 
     /**
      * Get the value of end_point
      *
      * @return string
      */
-    public function getEndPoint(): string {
+    public function getEndPoint(): string
+    {
         return $this->end_point;
     }
 
@@ -99,8 +97,10 @@ class Curl
      *
      * @return self
      */
-    public function setEndPoint(string $end_point): self {
+    public function setEndPoint(string $end_point): self
+    {
         $this->end_point = $end_point;
+
         return $this;
     }
 
@@ -109,7 +109,8 @@ class Curl
      *
      * @return array
      */
-    public function getHeaders(): array {
+    public function getHeaders(): array
+    {
         return $this->headers;
     }
 
@@ -120,8 +121,10 @@ class Curl
      *
      * @return self
      */
-    public function setHeaders(array $headers): self {
+    public function setHeaders(array $headers): self
+    {
         $this->headers = $headers;
+
         return $this;
     }
 
@@ -130,7 +133,8 @@ class Curl
      *
      * @return array
      */
-    public function getData(): array {
+    public function getData(): array
+    {
         return $this->data;
     }
 
@@ -141,8 +145,10 @@ class Curl
      *
      * @return self
      */
-    public function setData(array $data): self {
+    public function setData(array $data): self
+    {
         $this->data = $data;
+
         return $this;
     }
 }

@@ -21,9 +21,9 @@ class TemplateEngine
 
     /**
      * Assign value to the template key.
-     * 
-     * @param string $key
-     * @param mixed $value
+     *
+     * @param  string $key
+     * @param  mixed  $value
      * @return void
      */
     public function assign(string $key, $value): void
@@ -45,7 +45,7 @@ class TemplateEngine
     /**
      * Load template file
      *
-     * @param string $template
+     * @param  string                                    $template
      * @throws \System\Core\Exception\FrameworkException
      *
      * @return string
@@ -59,7 +59,6 @@ class TemplateEngine
 
         return file_get_contents($path);
     }
-
 
     /**
      * Parse and replace the variable in the template.
@@ -81,7 +80,7 @@ class TemplateEngine
 
     /**
      * Handle the template include.
-     * 
+     *
      * @param string $content
      *
      * @return string
@@ -112,8 +111,8 @@ class TemplateEngine
 
     /**
      * Handle the loops.
-     * 
-     * @param string $content
+     *
+     * @param  string $content
      * @return string
      */
     private function parseLoops(string $content): string

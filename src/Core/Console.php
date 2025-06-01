@@ -67,53 +67,6 @@ abstract class Console
         $this->parseArguments();
     }
 
-    /**
-     * Parses command-line arguments and options.
-     */
-    // public function parseArguments(): void
-    // {
-    //     $options = $this->options();
-    //     $shortOpts = [];
-    //     $longOpts = [];
-    //     foreach ($options as $long => $opt) {
-    //         if (!empty($opt['short'])) {
-    //             $shortOpts[] = $opt['short'];
-    //         }
-    //         $longOpts[] = $long;
-    //     }
-    //     $parsedOptions = getopt(implode("", $shortOpts), $longOpts);
-    //     var_export([$parsedOptions, implode("", $shortOpts), $shortOpts]);
-    //     // Store options
-    //     $this->options = $this->handleParseOptions($parsedOptions, $longOpts, $shortOpts);
-
-    //     // Extract positional arguments
-    //     $this->arguments = $this->extractPositionalArguments($parsedOptions);
-    // }
-
-    // protected function parseArguments()
-    // {
-    //     $options = $this->options();
-    //     $shortOpts = '';
-    //     $longOpts = [];
-    //     foreach ($options as $long => $opt) {
-    //         if (!empty($opt['short'])) {
-    //             $shortOpts .= $opt['short']; // e.g., 'h', 'c:'
-    //         }
-    //         // Add ':' to long option if short has ':'
-    //         $longOpts[] = $long;
-    //         // $longOpts[] = $long . (str_ends_with($opt['short'] ?? '', ':') ? ':' : '');
-    //     }
-    //     $parsedOptions = getopt($shortOpts, $longOpts);
-    //     global $argv;
-    //     var_export([$parsedOptions, $shortOpts, $longOpts, $argv]);
-
-    //     // Store options
-    //     $this->options = $this->handleParseOptions($parsedOptions, $longOpts, str_split(str_replace(':', '', $shortOpts)));
-
-    //     // Extract positional arguments
-    //     $this->arguments = $this->extractPositionalArguments($parsedOptions);
-    // }
-
     protected function parseArguments()
     {
         $this->options = [];
@@ -217,9 +170,7 @@ abstract class Console
     protected function extractPositionalArguments(array $parsedOptions): array
     {
         $argv = $this->args;
-        // Remove the script name
-        // array_shift($argv);
-
+        
         // Remove options and their values
         foreach ($argv as $index => $arg) {
             if (strpos($arg, '-') === 0) {
@@ -323,9 +274,9 @@ abstract class Console
     }
 
     /**
-         * Display a colored message in the console.
-         * Usage: $this->displayMessage('Warning!', 'warning');
-         */
+     * Display a colored message in the console.
+     * Usage: $this->displayMessage('Warning!', 'warning');
+     */
     public function showMessage(string $message, string $type = 'default'): void
     {
         $colors = [

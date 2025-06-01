@@ -1,12 +1,6 @@
 <?php
 
-/**
- * Security
- * php version 7.3.5
- *
- */
-
-namespace System\Core;
+namespace System\Libraray\Security;
 
 /**
  * Security class used to perform encryption and decryption

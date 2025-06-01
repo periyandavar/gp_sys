@@ -21,11 +21,34 @@ final class Constants
     public const METHOD_DELETE = 'delete';
 
     public const ENV_DEV = 'dev';
-    public const ENV_PRODUCTION = 'production';
+    public const ENV_PROD = 'prod';
 
-    public const ENV_TESTING = 'testing';
-
-    public const ENV_DEVELOPMENT = 'development';
+    public const ENV_TEST = 'test';
+    public const ENV_LOCAL = 'local';
 
     public const METHOD_PATCH = 'patch';
+
+    public const CONFIG_OVER_WRITE = [
+        self::ENV_LOCAL,
+        self::ENV_DEV,
+        self::ENV_TEST,
+        self::ENV_PROD
+    ];
+
+    public const TESTING_ENVS = [
+        self::ENV_DEV,
+        self::ENV_TEST,
+        self::ENV_LOCAL
+    ];
+
+    public const VALID_ENV = [
+        self::ENV_DEV,
+        self::ENV_PROD,
+        self::ENV_TEST,
+        self::ENV_LOCAL
+    ];
+
+    public const CONFIG = 'config';
+    public const ENV = 'env';
+    public const DB = 'db';
 }

@@ -4,10 +4,9 @@ namespace System\Core\Http\Response;
 
 class WebResponse extends Response
 {
-
-     /**
-     * Render and send an HTML view.
-     */
+    /**
+    * Render and send an HTML view.
+    */
     public function html(string $html, int $status = 200): void
     {
         $this->setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -25,6 +24,7 @@ class WebResponse extends Response
             $this->setStatusCode(404);
             $this->setBody('File not found.');
             $this->send();
+
             return;
         }
 
@@ -35,7 +35,7 @@ class WebResponse extends Response
         $this->setHeader('Expires', '0');
         $this->setHeader('Cache-Control', 'must-revalidate');
         $this->setHeader('Pragma', 'public');
-        $this->setHeader('Content-Length', (string)filesize($filePath));
+        $this->setHeader('Content-Length', (string) filesize($filePath));
         readfile($filePath);
         exit;
     }
@@ -43,9 +43,8 @@ class WebResponse extends Response
     public function handleException(\Exception $e): Response
     {
         $this->setStatusCode($e->getCode());
-        $this->html($e->getMessage() . ''. $e->getFile() .''. $e->getLine() .''. $e->getTraceAsString(), $e->getCode());
+        $this->html($e->getMessage() . '' . $e->getFile() . '' . $e->getLine() . '' . $e->getTraceAsString(), $e->getCode());
 
         return $this;
     }
-
 }

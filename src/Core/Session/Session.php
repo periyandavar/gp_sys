@@ -1,16 +1,11 @@
 <?php
 
-/**
- * Session
- * php version 7.3.5
- *
- */
-
-namespace System\Core;
+namespace System\Core\Session;
 
 use Exception;
 use Loader\Config\ConfigLoader;
 use Logger\Log;
+use System\Core\Exception\FrameworkException;
 
 /**
  * Session class set and manage custom session handlers

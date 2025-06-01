@@ -6,6 +6,7 @@ use Database\Database;
 use Database\DBQuery;
 use Loader\Config\ConfigLoader;
 use Loader\Container;
+use Loader\Loader;
 use Logger\Log;
 use System\Core\Exception\FrameworkException;
 use System\Core\Utility;
@@ -26,7 +27,6 @@ class Model
 
     protected $dbQuery;
 
-
     protected $config;
 
     /**
@@ -43,7 +43,6 @@ class Model
      */
     protected $log;
     protected $load;
-
 
     /**
      * Instantiate the new Model instance
@@ -74,7 +73,7 @@ class Model
      */
     public function find($table, $id, $primaryKey = 'id')
     {
-        return $this->db->selectAll()->from($table)->where([$primaryKey => $id])->getOne();
+        return $this->db->selectAll(false)->from($table)->where([$primaryKey => $id])->getOne();
     }
 
     /**
@@ -82,7 +81,7 @@ class Model
      */
     public function all($table)
     {
-        return $this->db->selectAll()->from($table)->getAll();
+        return $this->db->selectAll(false)->from($table)->getAll();
     }
 
     /**
