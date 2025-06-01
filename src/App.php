@@ -117,15 +117,15 @@ class App
     private static function initRun()
     {
         $config = ConfigLoader::getConfig('config');
-        set_exception_handler('exceptionHandler');
-        set_error_handler('errHandler');
+        // set_exception_handler('exceptionHandler');
+        // set_error_handler('errHandler');
         date_default_timezone_set($config->get('timezone', 'UTC'));
         Log::getInstance();
 
         $env = defined('ENV') ? ENV : 'dev';
 
         $can_suppress_error = self::canSuppressErrors($env);
-
+        self::loadDbConfig();
         if ($can_suppress_error) {
             Log::getInstance()->info('The application is set to suppress the system error. only the serious system and the application error will be thrown.');
         }
@@ -162,6 +162,20 @@ class App
         throw new FrameworkException("Config File $config_file not found to initialize the application configuration", FrameworkException::FILE_NOT_FOUND);
     }
 
+    public static function loadDbConfig()
+    {
+        $appDir = defined('BASE_DIR') ? BASE_DIR : '';
+        $env = defined('ENV') ? ENV : 'dev';
+        $can_suppress_error = self::canSuppressErrors($env);
+        $db_config_file = $appDir . '/config/' . $env . '/db.php';
+        self::loadConfigFile($db_config_file, ConfigLoader::ARRAY_LOADER, Constants::DB, $can_suppress_error);
+
+        $app_const_file = $appDir . '/config/constants.php';
+        if (file_exists($app_const_file)) {
+            include_once $app_const_file;
+        }
+    }
+
     private static function setUp()
     {
         $env = defined('ENV') ? ENV : 'dev';
@@ -174,15 +188,7 @@ class App
         $appDir = defined('APP_DIR') ? APP_DIR : '';
         $config_file = $appDir . '/config/' . $env . '/config.php';
         $config = self::loadConfigFile($config_file, ConfigLoader::ARRAY_LOADER, Constants::CONFIG, $can_suppress_error);
-
-        $db_config_file = $appDir . '/config/' . $env . '/db.php';
-        self::loadConfigFile($db_config_file, ConfigLoader::ARRAY_LOADER, Constants::DB, $can_suppress_error);
-
-        $app_const_file = $appDir . '/config/constants.php';
-        if (file_exists($app_const_file)) {
-            include_once $app_const_file;
-        }
-
+        self::loadDbConfig();
         set_exception_handler('exceptionHandler');
         set_error_handler('errHandler');
         date_default_timezone_set($config->get('timezone', 'UTC'));

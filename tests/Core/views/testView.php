@@ -1,1 +1,3 @@
-<?php echo 'View Loaded';
+<?php
+
+echo 'View Loaded';

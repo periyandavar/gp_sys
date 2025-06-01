@@ -41,18 +41,12 @@ abstract class Console
 
     public function execute()
     {
-        try {
-            $this->run();
-        } catch (Exception $e) {
-            $this->showError($e->getMessage());
-            throw new ConsoleException('Error executing command: ' . $this->getName(), $e->getCode(), $e);
-        } catch (Error $e) {
-            $this->showError($e->getMessage());
-            throw new ConsoleException('Error executing command: ' . $this->getName(), $e->getCode(), $e);
-        } catch (\Throwable $e) {
-            $this->showError($e->getMessage());
-            throw new ConsoleException('Error executing command: ' . $this->getName(), $e->getCode(), $e);
-        }
+        // try {
+        $this->run();
+        // } catch (\Throwable $e) {
+        //     $this->showError($e->getMessage());
+        //     throw new ConsoleException('Error executing command: ' . $this->getName(), $e->getCode(), $e);
+        // }
     }
 
     /**
@@ -170,7 +164,7 @@ abstract class Console
     protected function extractPositionalArguments(array $parsedOptions): array
     {
         $argv = $this->args;
-        
+
         // Remove options and their values
         foreach ($argv as $index => $arg) {
             if (strpos($arg, '-') === 0) {

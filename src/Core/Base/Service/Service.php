@@ -1,6 +1,5 @@
 <?php
 
-
 namespace System\Core\Base\Service;
 
 use Loader\Config\ConfigLoader;

@@ -13,6 +13,7 @@ use Loader\Container;
 use Router\Request\Request;
 use SimpleXMLElement;
 use Symfony\Component\Yaml\Yaml;
+use System\Core\Exception\FrameworkException;
 
 /**
  * Utility Class offers various static functions
@@ -119,7 +120,11 @@ final class Utility
     {
         static $db = DatabaseFactory::get($name);
         if (!$db) {
-            $dbConfig = ConfigLoader::getConfig('db')->getAll();
+            $dbConfig = ConfigLoader::getConfig('db');
+            if (is_null($dbConfig)) {
+                throw new FrameworkException('Db config not found');
+            }
+            $dbConfig = $dbConfig->getAll();
             DatabaseFactory::setUpConfig($dbConfig);
             $db = DatabaseFactory::get($name);
         }

@@ -2,7 +2,7 @@
 
 namespace App\Module\{{module}};
 
-class Module extends \System\Core\BaseModule
+class Module extends \System\Core\Base\Module\Module
 {
     public function __construct()
     {
