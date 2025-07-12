@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/periyandavar/gp_sys/tree/HEAD)
 
-[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.2...HEAD)
+[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.3...HEAD)
+
+**Merged pull requests:**
+
+- feat: add context class [\#6](https://github.com/periyandavar/gp_sys/pull/6) ([periyandavar](https://github.com/periyandavar))
+
+## [0.0.3](https://github.com/periyandavar/gp_sys/tree/0.0.3) (2025-07-12)
+
+[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.2...0.0.3)
 
 **Merged pull requests:**
 
