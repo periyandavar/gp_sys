@@ -4,6 +4,7 @@ namespace System\Core\Base\Context;
 
 use Loader\Config\ConfigLoader;
 use Loader\Container;
+use Loader\Exception\LoaderException;
 use Router\Route;
 use System\Core\Constants;
 
@@ -71,7 +72,11 @@ class WebContext extends Context
      */
     public function getRoute(): ?Route
     {
-        return Container::get('route', null, true);
+        try {
+            return Container::get('route');
+        } catch (LoaderException $e) {
+            return null;
+        }
     }
 
     /**
