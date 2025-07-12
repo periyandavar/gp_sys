@@ -67,7 +67,7 @@ class ModelTest extends TestCase
         Container::set('db', $this->db);
         Container::set('module', $this->moduleMock());
         $logMock = Mockery::mock(Log::class);
-        $logMock->shouldReceive('info')->with(Mockery::any())->andReturnNull();
+        $logMock->shouldReceive('info')->with(Mockery::any());
         $this->context->shouldReceive('getLogger')
             ->andReturn($logMock);
 
