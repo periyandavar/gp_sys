@@ -5,6 +5,12 @@ use System\Core\Test\TestCase;
 
 class MigratorTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->context->shouldReceive('getCommand')->andReturn('testCommand');
+        $this->context->shouldReceive('getArgs')->andReturn([]);
+    }
     public function testOptionsContainHelp()
     {
         $migrator = new Migrator();

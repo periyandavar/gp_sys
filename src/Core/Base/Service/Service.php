@@ -2,9 +2,7 @@
 
 namespace System\Core\Base\Service;
 
-use Loader\Config\ConfigLoader;
 use Loader\Container;
-use Loader\Loader;
 use StdClass;
 
 /**
@@ -12,22 +10,11 @@ use StdClass;
  */
 class Service
 {
-    protected $config;
-
-    /**
-     * Loader class object
-     *
-     * @var Loader
-     */
-    protected $loader;
-    protected $load;
+    protected $module;
 
     public function __construct()
     {
-        $module = Container::get('module');
-        $this->config = ConfigLoader::getConfig('config');
-        $this->loader = $module->getLoader();
-        $this->load = $module->load;
+        $this->module = Container::get('module');
     }
 
     /**

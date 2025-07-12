@@ -5,6 +5,7 @@ namespace System\Core\Session;
 use Exception;
 use Loader\Config\ConfigLoader;
 use Loader\Container;
+use System\Core\Constants;
 use System\Core\Exception\FrameworkException;
 use System\Core\Session\Driver\DatabaseSession;
 use System\Core\Session\Driver\FileSession;
@@ -33,7 +34,7 @@ class Session
             session_save_path($config['session_save_path']);
 
             ini_set('session.gc_maxlifetime', $config['session_expiration']);
-            // var_export($configp)
+
             switch ($config['session_driver']) {
                 case 'file':
                     $this->_driver = new FileSession();
@@ -50,6 +51,7 @@ class Session
                 [$this->_driver, 'read'],
                 [$this->_driver, 'write'],
                 [$this->_driver, 'destroy'],
+                // @phpstan-ignore-next-line
                 [$this->_driver, 'gc']
             );
             register_shutdown_function('session_write_close');

@@ -7,7 +7,7 @@ class ContextTest extends TestCase
 {
     public function testContextSetGetHasRemove()
     {
-        $context = Context::getInstance(['foo' => 'bar']);
+        $context = Context::getInstance('dev', ['foo' => 'bar']);
         $this->assertTrue($context->has('foo'));
         $this->assertEquals('bar', $context->get('foo'));
         $context->set('baz', 123);
@@ -18,7 +18,7 @@ class ContextTest extends TestCase
 
     public function testContextToStringAndLogConfig()
     {
-        $context = Context::getInstance(['a' => 1, 'b' => 2, 'c' => 3]);
+        $context = Context::getInstance('dev', ['a' => 1, 'b' => 2, 'c' => 3]);
         $context->setLogConfig(['a', 'c']);
         $str = (string) $context;
         $this->assertStringContainsString('"a":1', $str);
@@ -28,7 +28,7 @@ class ContextTest extends TestCase
 
     public function testContextDebugInfo()
     {
-        $context = Context::getInstance(['x' => 10, 'y' => 20]);
+        $context = Context::getInstance('dev', ['x' => 10, 'y' => 20]);
         $context->setLogConfig(['x']);
         $debug = $context->__debugInfo();
         $this->assertArrayHasKey('x', $debug);

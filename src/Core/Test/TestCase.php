@@ -4,12 +4,16 @@ namespace System\Core\Test;
 
 use Database\Database;
 use Database\DatabaseFactory;
+use Loader\Config\ConfigLoader;
 use Loader\Container;
 use Mockery;
+use System\Core\Base\Context\ConsoleContext;
+use System\Core\Base\Context\Context;
 use System\Core\Base\Module\Module;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
+    protected ?Context $context = null;
     public function mockDb($key = 'default', $db = null)
     {
         if ($db === null) {
@@ -92,5 +96,28 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected function moduleMock()
     {
         return Mockery::mock(Module::class)->makePartial();
+    }
+
+    public function setContext($context = null)
+    {
+        $this->context = $context ?: Mockery::mock(Context::class)->makePartial();
+        Container::set('context', $this->context);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->setContext();
+        // $this->mockDb();
+    }
+
+    public function getConsoleContext($command = '', $config = [])
+    {
+        $context = Mockery::mock(ConsoleContext::class)->makePartial();
+        $config = ConfigLoader::getInstance(ConfigLoader::VALUE_LOADER, $config, 'config');
+        $context->shouldReceive('getCommand')->andReturn($command);
+        $context->shouldReceive('getConfig')->andReturn($config);
+
+        return $context;
     }
 }

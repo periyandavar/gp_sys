@@ -5,6 +5,12 @@ use System\Core\Test\TestCase;
 
 class InitTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->context->shouldReceive('getCommand')->andReturn('testCommand');
+        $this->context->shouldReceive('getArgs')->andReturn([]);
+    }
     public function testOptionsContainHelp()
     {
         $init = new Init();

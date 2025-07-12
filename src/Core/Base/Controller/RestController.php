@@ -39,7 +39,7 @@ abstract class RestController extends Controller
      */
     public function create(DataRecord $model)
     {
-        $model = $this->getModel();
+        $model = $this->getDataModel();
 
         if ($model->validate() === false) {
             /**
@@ -65,7 +65,7 @@ abstract class RestController extends Controller
      */
     public function update($id, DataRecord $model)
     {
-        $model = $this->getModel();
+        $model = $this->getDataModel();
         $old_model = $this->view($id);
         if (!$old_model) {
             throw new \Exception('Model not found with id: ' . $id);
@@ -99,7 +99,7 @@ abstract class RestController extends Controller
      */
     public function patch(int $id, DataRecord $model)
     {
-        $model = $this->getModel();
+        $model = $this->getDataModel();
         $old_model = $this->view($id);
         if (!$old_model) {
             throw new \Exception('Model not found with id: ' . $id);
@@ -135,7 +135,7 @@ abstract class RestController extends Controller
         return $this->modelClass;
     }
 
-    protected function getModel()
+    protected function getDataModel()
     {
         $modelName = $this->getModelName();
         if (!class_exists($modelName)) {

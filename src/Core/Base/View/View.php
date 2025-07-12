@@ -2,16 +2,16 @@
 
 namespace System\Core\Base\View;
 
-use Loader\Config\ConfigLoader;
 use Loader\Container;
 use Router\Response\Response;
+use System\Core\Base\Context\Context;
 use System\Core\Base\View\Content\DynamicContent;
 use System\Core\TemplateEngine;
 use System\Core\Utility;
 
 class View
 {
-    protected ConfigLoader $config;
+    protected Context $context;
 
     /**
      * @var ViewContent[]
@@ -22,7 +22,7 @@ class View
 
     public function __construct()
     {
-        $this->config = ConfigLoader::getConfig('config');
+        $this->context = Container::get('context');
     }
 
     public function getHeaderContent(): array
@@ -137,7 +137,8 @@ class View
 
     public function renderTemplate(DynamicContent $template): string
     {
-        $templatePath = $this->config->get('template', '');
+        $config = $this->getConfig();
+        $templatePath = $config->get('template', '');
         $templateEngine = new TemplateEngine($templatePath);
         foreach ($template->getData() as $key => $value) {
             $templateEngine->assign($key, $value);
@@ -182,7 +183,7 @@ class View
 
     protected function renderView(string $file, array $data = []): string
     {
-        $path = $this->config->get('view', '') . DS . $file;
+        $path = $this->getConfig()->get('view', '') . DIRECTORY_SEPARATOR . $file;
         $path = $this->handleExtension($path, 'php');
 
         if (!file_exists($path)) {
@@ -202,7 +203,7 @@ class View
 
     final public function renderScript(string $script)
     {
-        $scriptPath = $this->config->get('static', '') . DS . 'js';
+        $scriptPath = $this->getConfig()->get('static', '') . DIRECTORY_SEPARATOR . 'js';
         $this->handleExtension($scriptPath, 'js');
         $scriptPath = rtrim($scriptPath, '/') . '/' . $script;
 
@@ -211,7 +212,7 @@ class View
 
     final public function renderSheet(string $sheet)
     {
-        $sheetPath = $this->config->get('static', '') . DS . 'css';
+        $sheetPath = $this->getConfig()->get('static', '') . DIRECTORY_SEPARATOR . 'css';
         $this->handleExtension($sheetPath, 'css');
         $sheetPath = rtrim($sheetPath, '/') . '/' . $sheet;
 
@@ -220,7 +221,7 @@ class View
 
     protected function renderLayout(string $file)
     {
-        $path = $this->config->get('layout', '');
+        $path = $this->getConfig()->get('layout', '');
         $path = rtrim($path, '/') . '/' . $file;
         $path = $this->handleExtension($path, 'html');
 
@@ -331,5 +332,10 @@ class View
         $response->setType(Response::TYPE_HTML);
 
         return $response;
+    }
+
+    public function getConfig()
+    {
+        return $this->context->getConfig();
     }
 }

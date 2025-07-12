@@ -97,7 +97,7 @@ class WebContext extends Context
 
     public function getCookies(): array
     {
-        return $_COOKIE ?? [];
+        return $_COOKIE;
     }
     public function getInputData(): array
     {

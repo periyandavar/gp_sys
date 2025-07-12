@@ -18,10 +18,11 @@ class WebContextTest extends TestCase
 
     public function testWebContextGetters()
     {
-        $webContext = WebContext::getInstance([
-            'router' => 'main',
-            'module' => 'user'
+        $webContext = WebContext::getInstance('dev', [
+            'uri' => '/test/uri',
         ]);
+        $webContext->setModule('user');
+        $webContext->setRouter('main');
         $this->assertEquals('main', $webContext->getRouter());
         $this->assertEquals('user', $webContext->getModule());
         $this->assertEquals('POST', $webContext->getRequestMethod());
@@ -29,15 +30,16 @@ class WebContextTest extends TestCase
         $this->assertEquals(['foo' => 'bar'], $webContext->getQueryParams());
         $this->assertEquals(['baz' => 'qux'], $webContext->getPostParams());
         $this->assertEquals(['user' => 'alice'], $webContext->getSession());
-        $this->assertEquals('123', $webContext->getCookie('token'));
+        $this->assertEquals(['token' => '123'], $webContext->getCookies());
     }
 
     public function testWebContextToString()
     {
-        $webContext = WebContext::getInstance([
-            'router' => 'main',
-            'module' => 'user'
+        $webContext = WebContext::getInstance('dev', [
+            'uri' => '/test/uri',
         ]);
+        $webContext->setModule('user');
+        $webContext->setRouter('main');
         Container::set('route', new \Router\Route('main', 'user', 'index'));
         $webContext->setLogConfig(['router', 'module', 'request_method']);
         $str = (string) $webContext;

@@ -14,7 +14,7 @@ class ConsoleContextTest extends TestCase
 
     public function testConsoleContextGetters()
     {
-        $consoleContext = ConsoleContext::getInstance([
+        $consoleContext = ConsoleContext::getInstance('dev', [
             'command' => 'run',
             'action' => 'start',
             'args' => ['foo']
@@ -30,7 +30,7 @@ class ConsoleContextTest extends TestCase
 
     public function testConsoleContextToString()
     {
-        $consoleContext = ConsoleContext::getInstance([
+        $consoleContext = ConsoleContext::getInstance('dev', [
             'command' => 'run',
             'action' => 'start',
             'args' => ['foo']

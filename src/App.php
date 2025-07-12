@@ -43,8 +43,13 @@ class App
 
     private static function loadServices()
     {
-        $services = require_once 'config/services.php';
+        $services = require_once self::getConfigPath('services');
         Container::loadFromConfig($services);
+    }
+
+    private static function getConfigPath($name)
+    {
+        return 'config' . DIRECTORY_SEPARATOR . $name . '.php';
     }
 
     private static function runWebApp()
@@ -183,7 +188,7 @@ class App
         $db_config_file = 'config/' . $env . '/db.php';
         self::loadConfigFile($db_config_file, ConfigLoader::ARRAY_LOADER, Constants::DB, $can_suppress_error);
 
-        $app_const_file = 'config/constants.php';
+        $app_const_file = self::getConfigPath('constants');
         if (file_exists($app_const_file)) {
             include_once $app_const_file;
         }

@@ -59,9 +59,7 @@ abstract class Console
 
     public function __construct()
     {
-        // global $argv;
         $this->context = $this->get('context');
-        // $this->args = $argv ?? [];
         $this->command = $this->getContext()->getCommand();
         $this->args = $this->getContext()->getArgs();
         $this->parseArguments();

@@ -2,10 +2,17 @@
 
 namespace System\Core\Base\Log;
 
-use Logger\Logger as LogHandler;
 use Psr\Log\LoggerInterface;
 use System\Core\Utility;
 
+/**
+ * @method info(string $message, array $context = [])
+ * @method debug(string $message, array $context = [])
+ * @method notice(string $message, array $context = [])
+ * @method warning(string $message, array $context = [])
+ * @method error(string $message, array $context = [])
+ * @method critical(string $message, array $context = [])
+ */
 class Logger
 {
     public const LOG_HANDLING_METHODS = [
@@ -54,7 +61,7 @@ class Logger
 
     public function __construct(LoggerInterface $logger, array $ignore_context_keys = [])
     {
-        $this->handler = new LogHandler($logger);
+        $this->handler = $logger;
         $this->ignore_context_keys = $ignore_context_keys;
     }
 

@@ -33,6 +33,9 @@ class ViewTest extends TestCase
         $responseMock->shouldReceive('setBody')->andReturnSelf();
         $responseMock->shouldReceive('setType')->andReturnSelf();
         Container::set(Response::class, $responseMock);
+        $this->context->shouldReceive('getConfig')
+            ->andReturn($configMock);
+        Container::set('context', $this->context);
 
         $this->view = new View();
     }

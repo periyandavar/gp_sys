@@ -83,6 +83,16 @@ class Controller
         $this->service = $service;
     }
 
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    public function getService(): Service
+    {
+        return $this->service;
+    }
+
     /**
      * Add new object to $_obj array
      *

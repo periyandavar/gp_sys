@@ -1,12 +1,12 @@
 <?php
 
-use Loader\Config\ConfigLoader;
 use Loader\Container;
 use Loader\Load;
 use Loader\Loader;
 use Router\Request\Request;
 use System\Core\Base\Controller\Controller;
 use System\Core\Base\Model\Model;
+use System\Core\Base\Module\Module;
 use System\Core\Base\Service\Service;
 use System\Core\Test\TestCase as TestTestCase;
 
@@ -16,9 +16,9 @@ class ControllerTest extends TestTestCase
     {
         $this->mockDb();
         // Mock dependencies for Container
-        $moduleMock = $this->createMock(Module::class);
+        $moduleMock = Mockery::mock(Module::class)->makePartial();
         $loaderMock = Mockery::mock(Loader::class);
-        $moduleMock->method('getLoader')->willReturn($loaderMock);
+        $moduleMock->shouldReceive('getLoader')->andReturn($loaderMock);
         $moduleMock->load = new Load();
 
         Container::set('module', $moduleMock);
@@ -28,26 +28,13 @@ class ControllerTest extends TestTestCase
             {
             }
         });
-
-        // Mock config loader
-        // ConfigLoader::setConfig('config', ['foo' => 'bar']);
     }
 
     public function testControllerInitialization()
     {
-        $controller = $this->getMockForAbstractClass(Controller::class);
-        $this->assertInstanceOf(Controller::class, $controller);
-        $model = $this->getProperty($controller, 'model');
-        $this->assertInstanceOf(Model::class, $model);
-        $this->assertInstanceOf(Service::class, $this->getProperty($controller, 'service'));
         $controller = new Controller();
-        $this->assertInstanceOf(Model::class, $controller->model);
-        $this->assertInstanceOf(Service::class, $controller->service);
-        $this->assertNotNull($controller->input);
-        $this->assertNotNull($controller->config);
-        $this->assertNotNull($controller->loader);
-        $this->assertNotNull($controller->load);
-        $this->assertNotNull($controller->module);
+        $this->assertEquals(new Model(), $controller->getModel());
+        $this->assertEquals(new Service(), $controller->getService());
     }
 
     public function testSetModelAndService()
@@ -57,8 +44,8 @@ class ControllerTest extends TestTestCase
         $service = $this->createMock(Service::class);
         $controller->setModel($model);
         $controller->setService($service);
-        $this->assertSame($model, $controller->model);
-        $this->assertSame($service, $controller->service);
+        $this->assertSame($model, $controller->getModel());
+        $this->assertSame($service, $controller->getService());
     }
 
     public function testMagicSetGetIsset()
@@ -70,4 +57,3 @@ class ControllerTest extends TestTestCase
         $this->assertFalse(isset($controller->notset));
     }
 }
-
