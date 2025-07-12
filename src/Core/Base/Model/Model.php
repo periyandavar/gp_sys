@@ -62,10 +62,6 @@ class Model
         $this->config = ConfigLoader::getConfig('config');
         $this->loader = $module->getLoader();
         $this->load = $module->load;
-        $this->log = Log::getInstance();
-        Log::getInstance()->info(
-            'The ' . static::class . ' class is initalized successfully'
-        );
     }
 
     /**

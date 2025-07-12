@@ -10,7 +10,7 @@ class CreateModule extends Create
     /**
      * Define short and long options for getopt().
      */
-    protected function options(): array
+    public function options(): array
     {
         return [
             'help' => [
