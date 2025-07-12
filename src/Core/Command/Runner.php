@@ -67,11 +67,24 @@ class Runner extends Console
         }
     }
 
+    /**
+     * Runs the migration command.
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
     public function runMigration(): void
     {
         $migrator = new Migrator();
         $migrator->execute();
     }
+
+    /**
+     * Runs the rollback command.
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
     public function runRollback(): void
     {
         $migrator = new Migrator();

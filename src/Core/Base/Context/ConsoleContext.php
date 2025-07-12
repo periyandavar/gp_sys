@@ -11,6 +11,9 @@ class ConsoleContext extends Context
     protected $action;
     protected $args = [];
 
+    /**
+     * Initializes the console context.
+     */
     protected function __init__()
     {
         parent::__init__();
@@ -26,21 +29,41 @@ class ConsoleContext extends Context
         unset($this->data['command'], $this->data['action'], $this->data['args']);
     }
 
+    /**
+     * Gets the command name.
+     *
+     * @return string
+     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
+    /**
+     * Gets the action name.
+     *
+     * @return string
+     */
     public function getAction(): string
     {
         return $this->action;
     }
 
+    /**
+     * Gets the arguments passed to the command.
+     *
+     * @return array
+     */
     public function getArgs(): array
     {
         return $this->args;
     }
 
+    /**
+     * Gets the command line arguments.
+     *
+     * @return array
+     */
     public function getArgv(): array
     {
         global $argv;
@@ -48,6 +71,11 @@ class ConsoleContext extends Context
         return $argv ?? [];
     }
 
+    /**
+     * Gets the number of command line arguments.
+     *
+     * @return int
+     */
     public function getArgc(): int
     {
         global $argc;
@@ -55,6 +83,11 @@ class ConsoleContext extends Context
         return $argc ?? 0;
     }
 
+    /**
+     * Gets the script name.
+     *
+     * @return string|null
+     */
     public function getScriptName(): ?string
     {
         global $argv;
@@ -62,6 +95,13 @@ class ConsoleContext extends Context
         return $argv[0] ?? null;
     }
 
+    /**
+     * Gets the value of a command line option.
+     *
+     * @param  string $name    The name of the option.
+     * @param  mixed  $default The default value if the option is not set.
+     * @return mixed
+     */
     public function getOption(string $name, $default = null)
     {
         global $argv;
@@ -74,11 +114,21 @@ class ConsoleContext extends Context
         return $default;
     }
 
+    /**
+     * Checks if the console is interactive.
+     *
+     * @return bool
+     */
     public function isInteractive(): bool
     {
         return function_exists('posix_isatty') && posix_isatty(STDIN);
     }
 
+    /**
+     * Gets the context data.
+     *
+     * @return array
+     */
     public function getData(): array
     {
         $contextData = $this->all();
@@ -95,6 +145,14 @@ class ConsoleContext extends Context
         return array_merge($contextData, $consoleData);
     }
 
+    /**
+     * Creates a new instance of ConsoleContext.
+     *
+     * @param  string     $env     The environment (default: Constants::ENV_DEV).
+     * @param  array      $data    The context data.
+     * @param  array|null $logKeys Optional log keys.
+     * @return self
+     */
     public static function getInstance(string $env = Constants::ENV_DEV, array $data = [], ?array $logKeys = null): self
     {
         $command = $data['command'] ?? null;

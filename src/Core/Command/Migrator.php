@@ -61,6 +61,9 @@ class Migrator extends Console
         }
     }
 
+    /**
+     * Returns the last migration file.
+     */
     private function getLastMigration()
     {
         $config = $this->getConfig();
@@ -74,6 +77,12 @@ class Migrator extends Console
         return $db->fetch();
     }
 
+    /**
+     * Rollback the last migration.
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
     private function rollback(): void
     {
         $config = $this->getConfig();
@@ -88,7 +97,7 @@ class Migrator extends Console
             $file .= '.php';
         }
         $migrationsDir = $migrationsDir = $this->getConfig()->get('migration', [])['path'] ?? null;
-        $file = $migrationsDir . DS . $file;
+        $file = $migrationsDir . DIRECTORY_SEPARATOR . $file;
 
         if (!file_exists($file)) {
             throw new \RuntimeException("Migration file does not exist: $file");
@@ -99,7 +108,7 @@ class Migrator extends Console
 
         if (class_exists($className)) {
             $migration = new $className();
-            if ($migration instanceof \System\Core\Migration) {
+            if ($migration instanceof Migration) {
                 $this->showInfo('Found migration class: ' . $className . "\n");
                 $this->showInfo('Rolling back migration: ' . $migration->getName() . "\n");
                 Migration::$migrationsDir = $migrationsDir;
@@ -111,6 +120,13 @@ class Migrator extends Console
             $this->showError('Class not found in file: ' . $file . "\n");
         }
     }
+
+    /**
+     * Migrate the database.
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
     private function migrate(): void
     {
         $config = $this->getConfig();

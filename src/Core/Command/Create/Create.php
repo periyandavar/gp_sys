@@ -63,6 +63,16 @@ class Create extends Console
         return;
     }
 
+    /**
+     * Returns the temaplate content for the specified file.
+     *
+     * @param string $fileName
+     * @param array  $variables
+     *
+     * @throws \RuntimeException
+     *
+     * @return string
+     */
     protected function getTemplate(string $fileName, array $variables = []): string
     {
         $templatePath = $this->template_dir . $fileName;
@@ -80,6 +90,13 @@ class Create extends Console
         return $templateContent;
     }
 
+    /**
+     * Checks if the subcommand is valid.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
     public static function isValidSubCommand(string $name)
     {
         $subCommands = [

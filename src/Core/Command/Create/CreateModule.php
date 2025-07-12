@@ -42,6 +42,13 @@ class CreateModule extends Create
         $this->showSuccess('Module created successfully');
     }
 
+    /**
+     * Creates a new module directory structure and files.
+     *
+     * @param string $name
+     *
+     * @return void
+     */
     public function createModule(string $name): void
     {
         $app_dir = defined('APP_DIR') ? APP_DIR : '';

@@ -1,21 +1,15 @@
 <?php
 
 use Loader\Container;
-use Logger\Log;
 use Router\Response\Response;
-use Router\Router;
-use System\Core\Base\Context\WebContext;
-use System\Core\Constants;
-use System\Core\Exception\FrameworkException;
-use System\Core\Utility;
 use System\App;
+use System\Core\Base\Context\WebContext;
+use System\Core\Utility;
 
 require 'vendor/autoload.php';
 
-define('VALID_REQ', true);
 define('APP_DIR', __DIR__);
 define('ENV', '{{env}}');
-define('DS', DIRECTORY_SEPARATOR);
 define('SUPPRESS_SYSTEM_ERRORS', {{suppress_errors}});
 
 $requested = $_SERVER['REQUEST_URI'] ?? '';
@@ -26,83 +20,15 @@ if ($path !== '/' && is_file($file) && Utility::isStaticFile($file)) {
     return false;
 }
 
-/**
- * Define error handler
- */
-if (!function_exists('errHandler')) {
-    /**
-     * Error handler
-     *
-     * @param $errNo   Error level
-     * @param $errMsg  Error Message
-     * @param $errFile Error File
-     * @param $errLine Error Line
-     *
-     * @return void
-     */
-    function errHandler($errNo, $errMsg, $errFile, $errLine)
-    {
-        ob_get_contents() and ob_end_clean();
-        Log::getInstance()->error(
-            $errMsg . ' in ' . $errFile . ' at line ' . $errLine
-        );
-        Router::error();
-    }
-}
-
-/**
- * Define exception handler
- */
-if (!function_exists('exceptionHandler')) {
-    /**
-     * Error handler
-     *
-     * @param $exception Exception object
-     *
-     * @return void
-     */
-    function exceptionHandler($exception)
-    {
-        ob_get_contents() and ob_end_clean();
-        Log::getInstance()->error(
-            $exception->getMessage() . ' in ' . $exception->getFile() . ' at line '
-                . $exception->getLine()
-        );
-        Router::error();
-    }
-}
-
-App::loadConfig(false);
-
 $url = $_SERVER['REQUEST_URI'];
-$config = ConfigLoader::getConfig('config');
 $url = str_replace('/index.php', '', $url);
-$url_path = str_replace($config->get('base_url'), '', $url);
-$url = ltrim($url_path, '/');
-$parts = explode('/', $url, 2);
-$module = Utility::coalesceArray($parts, 0, '');
-$ctrl = Utility::coalesceArray($parts, 1, '');
 
-// validate module
-if (! App::isValidModule($module)) {
-    $module = $config->get('default_module', 'Default');
-    if (! App::isValidModule($module)) {
-        throw new FrameworkException("No valid module found for the request: $module", FrameworkException::INVALID_MODULE);
-    }
-    $ctrl = $url_path;
-}
+$context = WebContext::getInstance(ENV, [
+    WebContext::PARAM_URI => $url,
+]);
 
-
-
-// set context
-
-$context = [
-    'module' => $module,
-    'controller' => $ctrl,
-];
-
-Container::set('context', function () use ($context) {
-    return WebContext::getInstance($context);
+Container::set('context', function() use ($context) {
+    return $context;
 });
 
 $output = App::run();
@@ -116,7 +42,7 @@ if ($output instanceof Response) {
     return;
 }
 
-$response = Container::get(Response::class);
+$response = Container::get('response');
 $response->setBody($output);
 
 ob_start();

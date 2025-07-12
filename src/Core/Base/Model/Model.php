@@ -4,10 +4,8 @@ namespace System\Core\Base\Model;
 
 use Database\Database;
 use Database\DBQuery;
-use Loader\Config\ConfigLoader;
 use Loader\Container;
-use Loader\Loader;
-use Logger\Log;
+use System\Core\Base\Context\Context;
 use System\Core\Exception\FrameworkException;
 use System\Core\Utility;
 
@@ -25,24 +23,8 @@ class Model
      */
     protected $db;
 
-    protected $dbQuery;
-
-    protected $config;
-
-    /**
-     * Loader class object
-     *
-     * @var Loader
-     */
-    protected $loader;
-
-    /**
-     * Log class instance
-     *
-     * @var Log
-     */
-    protected $log;
-    protected $load;
+    protected DBQuery $dbQuery;
+    protected Context $context;
 
     /**
      * Instantiate the new Model instance
@@ -58,11 +40,8 @@ class Model
         }
 
         $this->dbQuery = new DBQuery();
-        $module = Container::get('module');
-        $this->config = ConfigLoader::getConfig('config');
-        $this->loader = $module->getLoader();
-        $this->load = $module->load;
-        Container::get('log')->info('The ' . static::class . ' class is initalized successfully');
+        $this->context = Container::get('context');
+        $this->context->getLogger()->info('The ' . static::class . ' class is initalized successfully');
     }
 
     /**

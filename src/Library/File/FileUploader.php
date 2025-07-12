@@ -126,7 +126,7 @@ class FileUploader
         ?array $file,
         string $filename,
         ?string $subfolder = null,
-        string $destination = null,
+        ?string $destination = null,
         bool $overwrite = false
     ): bool {
         $config = ConfigLoader::getConfig('config')->getAll();

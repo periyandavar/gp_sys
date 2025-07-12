@@ -4,17 +4,18 @@ namespace System\Core\Base\Service;
 
 use Loader\Container;
 use StdClass;
+use System\Core\Base\Context\Context;
 
 /**
  * BaseService class, Base class for all services
  */
 class Service
 {
-    protected $module;
+    protected Context $context;
 
     public function __construct()
     {
-        $this->module = Container::get('module');
+        $this->context = Container::get('context');
     }
 
     /**

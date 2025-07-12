@@ -29,18 +29,35 @@ class Logger
 
     private $ignore_context_keys = [];
 
-    protected $handler;
+    protected LoggerInterface $handler;
 
+    /**
+     * Set the keys to ignore in the context.
+     *
+     * @param array $keys
+     *
+     * @return void
+     */
     public function setIgnoreContextKeys(array $keys): void
     {
         $this->ignore_context_keys = $keys;
     }
 
+    /**
+     * Get the keys to ignore in the context.
+     *
+     * @return array
+     */
     public function getIgnoreContextKeys(): array
     {
         return $this->ignore_context_keys;
     }
 
+    /**
+     * Get the context data, excluding ignored keys.
+     *
+     * @return array
+     */
     private function getContext()
     {
         $context = Utility::getContext()->getValues();
@@ -50,6 +67,13 @@ class Logger
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    /**
+     * Frame the context data by merging it with the current context.
+     *
+     * @param mixed $context
+     *
+     * @return mixed
+     */
     private function frameContextData($context)
     {
         if (! is_array($context)) {
@@ -59,12 +83,26 @@ class Logger
         return array_merge($context, $this->getContext());
     }
 
+    /**
+     * Logger constructor.
+     *
+     * @param LoggerInterface $logger
+     * @param array           $ignore_context_keys
+     */
     public function __construct(LoggerInterface $logger, array $ignore_context_keys = [])
     {
         $this->handler = $logger;
         $this->ignore_context_keys = $ignore_context_keys;
     }
 
+    /**
+     * Magic method to handle logging methods dynamically.
+     *
+     * @param string $method
+     * @param array  $args
+     *
+     * @return mixed
+     */
     public function __call($method, $args)
     {
         if (in_array($method, self::LOG_HANDLING_METHODS)) {

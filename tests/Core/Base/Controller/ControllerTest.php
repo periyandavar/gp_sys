@@ -5,6 +5,7 @@ use Loader\Load;
 use Loader\Loader;
 use Router\Request\Request;
 use System\Core\Base\Controller\Controller;
+use System\Core\Base\Log\Logger;
 use System\Core\Base\Model\Model;
 use System\Core\Base\Module\Module;
 use System\Core\Base\Service\Service;
@@ -14,20 +15,21 @@ class ControllerTest extends TestTestCase
 {
     protected function setUp(): void
     {
+        parent::setUp();
         $this->mockDb();
         // Mock dependencies for Container
         $moduleMock = Mockery::mock(Module::class)->makePartial();
         $loaderMock = Mockery::mock(Loader::class);
         $moduleMock->shouldReceive('getLoader')->andReturn($loaderMock);
+        $moduleMock->shouldReceive('getContext')->andReturn($this->context);
         $moduleMock->load = new Load();
 
         Container::set('module', $moduleMock);
-        Container::set(Request::class, $this->createMock(Request::class));
-        Container::set('log', new class() {
-            public function info($msg)
-            {
-            }
-        });
+        Container::set('request', $this->createMock(Request::class));
+        $logMock = Mockery::mock(Logger::class);
+        $logMock->shouldReceive('info')->with(Mockery::any())->andReturnNull();
+        $this->context->shouldReceive('getLogger')
+            ->andReturn($logMock);
     }
 
     public function testControllerInitialization()

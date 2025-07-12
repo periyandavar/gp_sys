@@ -40,6 +40,12 @@ class WebResponse extends Response
         exit;
     }
 
+    /**
+     * Handle exceptions and send an error response.
+     *
+     * @param  \Exception  $e
+     * @return WebResponse
+     */
     public function handleException(\Exception $e): Response
     {
         $this->setStatusCode($e->getCode());

@@ -108,7 +108,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->setContext();
-        // $this->mockDb();
     }
 
     public function getConsoleContext($command = '', $config = [])

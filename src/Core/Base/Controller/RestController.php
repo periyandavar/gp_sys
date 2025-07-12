@@ -35,7 +35,7 @@ abstract class RestController extends Controller
     /**
      * Handles POST request
      *
-     * @return DataRecord|Response|null
+     * @return Record|Response|null
      */
     public function create(DataRecord $model)
     {
@@ -119,6 +119,11 @@ abstract class RestController extends Controller
         return $old_model->reload();
     }
 
+    /**
+     * Handles GET request for listing all records
+     *
+     * @return DataRecord[]|Response
+     */
     public function list()
     {
         $model = $this->getModelName();
@@ -126,6 +131,12 @@ abstract class RestController extends Controller
         return $model::findAll();
     }
 
+    /**
+     * Returns the model class name.
+     *
+     * @return string
+     * @throws \Exception
+     */
     protected function getModelName()
     {
         if (empty($this->modelClass)) {
@@ -135,6 +146,12 @@ abstract class RestController extends Controller
         return $this->modelClass;
     }
 
+    /**
+     * Returns the data model with values from the request.
+     *
+     * @return Record
+     * @throws \Exception
+     */
     protected function getDataModel()
     {
         $modelName = $this->getModelName();

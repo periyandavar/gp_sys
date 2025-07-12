@@ -20,26 +20,51 @@ class View
 
     protected string $output = '';
 
+    /**
+     * View constructor.
+     */
     public function __construct()
     {
         $this->context = Container::get('context');
     }
 
+    /**
+     * Returns Header content.
+     *
+     * @return array
+     */
     public function getHeaderContent(): array
     {
         return [];
     }
 
+    /**
+     * Returns Footer content.
+     *
+     * @return array
+     */
     public function getFooterContent(): array
     {
         return [];
     }
 
+    /**
+     * Returns Body content.
+     *
+     * @return array
+     */
     public function BodyContent(): array
     {
         return [];
     }
 
+    /**
+     * Frames the view contents from the provided data.
+     *
+     * @param array $data
+     *
+     * @return ViewContent[]
+     */
     public function frameViewContents(array $data): array
     {
         $viewContents = [];
@@ -54,6 +79,13 @@ class View
         return $viewContents;
     }
 
+    /**
+     * Create a ViewContent instance from the provided data.
+     *
+     * @param array $data
+     *
+     * @return ViewContent
+     */
     public function createViewContent(array $data): ViewContent
     {
         $viewContent = new ViewContent();
@@ -95,6 +127,13 @@ class View
         return $viewContent;
     }
 
+    /**
+     * Add a view content.
+     *
+     * @param \System\Core\Base\View\ViewContent $item
+     *
+     * @return void
+     */
     public function add(ViewContent $item): void
     {
         $this->content[] = $item;
@@ -119,6 +158,11 @@ class View
         return $this->output;
     }
 
+    /**
+     * Get all contents from the view.
+     *
+     * @return ViewContent[]
+     */
     public function getAllContents(): array
     {
         $content = [];
@@ -130,11 +174,23 @@ class View
         return $this->frameViewContents($content);
     }
 
+    /**
+     * Get the content of the view.
+     *
+     * @return array
+     */
     public function getContent(): array
     {
         return $this->content;
     }
 
+    /**
+     * Render a template with the provided data.
+     *
+     * @param DynamicContent $template
+     *
+     * @return string
+     */
     public function renderTemplate(DynamicContent $template): string
     {
         $config = $this->getConfig();
@@ -172,6 +228,14 @@ class View
         return '';
     }
 
+    /**
+     * Handle file extension for the view.
+     *
+     * @param string $file
+     * @param string $extension
+     *
+     * @return string
+     */
     private function handleExtension(string $file, string $extension): string
     {
         if (pathinfo($file, PATHINFO_EXTENSION) !== $extension) {
@@ -181,6 +245,14 @@ class View
         return $file;
     }
 
+    /**
+     * Render a view file with the provided data.
+     *
+     * @param string $file
+     * @param array  $data
+     *
+     * @return string
+     */
     protected function renderView(string $file, array $data = []): string
     {
         $path = $this->getConfig()->get('view', '') . DIRECTORY_SEPARATOR . $file;
@@ -201,6 +273,13 @@ class View
         return ob_get_clean();
     }
 
+    /**
+     * Render a script file.
+     *
+     * @param string $script
+     *
+     * @return string
+     */
     final public function renderScript(string $script)
     {
         $scriptPath = $this->getConfig()->get('static', '') . DIRECTORY_SEPARATOR . 'js';
@@ -210,6 +289,13 @@ class View
         return "<script src='$scriptPath'></script>";
     }
 
+    /**
+     * Render a style sheet.
+     *
+     * @param string $sheet
+     *
+     * @return string
+     */
     final public function renderSheet(string $sheet)
     {
         $sheetPath = $this->getConfig()->get('static', '') . DIRECTORY_SEPARATOR . 'css';
@@ -219,6 +305,13 @@ class View
         return "<link rel='stylesheet' type='text/css' href='$sheetPath'>";
     }
 
+    /**
+     * Render a layout file.
+     *
+     * @param string $file
+     *
+     * @return string
+     */
     protected function renderLayout(string $file)
     {
         $path = $this->getConfig()->get('layout', '');
@@ -232,6 +325,11 @@ class View
         return file_get_contents($path);
     }
 
+    /**
+     * Clear the view content.
+     *
+     * @return void
+     */
     public function clear(): void
     {
         $this->content = [];
@@ -254,6 +352,13 @@ class View
         }
     }
 
+    /**
+     * Add multiple contents.
+     *
+     * @param array $contents
+     *
+     * @return void
+     */
     public function addContents(array $contents): void
     {
         foreach ($contents as $content) {
@@ -261,6 +366,14 @@ class View
         }
     }
 
+    /**
+     * Add a style sheet.
+     *
+     * @param string $href
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addStyle($href, bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -269,6 +382,14 @@ class View
         $this->content[array_key_last($this->content)]->addStyle($href);
     }
 
+    /**
+     * Add a script file.
+     *
+     * @param string $src
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addScript($src, bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -277,6 +398,14 @@ class View
         $this->content[array_key_last($this->content)]->addScript($src);
     }
 
+    /**
+     * Add a CSS style.
+     *
+     * @param string $css
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addCss($css, bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -285,6 +414,14 @@ class View
         $this->content[array_key_last($this->content)]->addCss($css);
     }
 
+    /**
+     * Add a JavaScript file.
+     *
+     * @param string $js
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addJs($js, bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -293,6 +430,15 @@ class View
         $this->content[array_key_last($this->content)]->addJs($js);
     }
 
+    /**
+     * Add a template file.
+     *
+     * @param string $tpl
+     * @param array  $data
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addTemplate($tpl, array $data = [], bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -301,6 +447,14 @@ class View
         $this->content[array_key_last($this->content)]->addTemplate($tpl, $data);
     }
 
+    /**
+     * Add a layout file.
+     *
+     * @param string $layout
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addLayout($layout, bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -309,6 +463,15 @@ class View
         $this->content[array_key_last($this->content)]->addLayout($layout);
     }
 
+    /**
+     * Add a view file with data.
+     *
+     * @param string $view
+     * @param array  $data
+     * @param bool   $newGroup
+     *
+     * @return void
+     */
     public function addView($view, array $data = [], bool $newGroup = false)
     {
         if ($newGroup || empty($this->content)) {
@@ -317,11 +480,21 @@ class View
         $this->content[array_key_last($this->content)]->addView($view, $data);
     }
 
+    /**
+     * Convert the view to a string.
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->render();
     }
 
+    /**
+     * Get the response object.
+     *
+     * @return Response
+     */
     public function get()
     {
         /**
@@ -334,6 +507,11 @@ class View
         return $response;
     }
 
+    /**
+     * Get the configuration loader.
+     *
+     * @return \Loader\Config\ConfigLoader
+     */
     public function getConfig()
     {
         return $this->context->getConfig();

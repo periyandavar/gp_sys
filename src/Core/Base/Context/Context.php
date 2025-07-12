@@ -3,6 +3,7 @@
 namespace System\Core\Base\Context;
 
 use Loader\Config\ConfigLoader;
+use Loader\Container;
 use System\Core\Constants;
 
 class Context
@@ -19,6 +20,15 @@ class Context
 
     protected $config;
 
+    protected $container = [];
+
+    /**
+     * Constructor to initialize the context.
+     *
+     * @param string     $env     The environment (default: Constants::ENV_DEV).
+     * @param array      $data    The context data.
+     * @param array|null $logKeys Optional log keys.
+     */
     protected function __construct(string $env = Constants::ENV_DEV, array $data = [], ?array $logKeys = null)
     {
         $this->env = $env;
@@ -27,6 +37,11 @@ class Context
         $this->__init__();
     }
 
+    /**
+     * Initializes the context.
+     *
+     * This method should be overridden in subclasses to load environment-specific configurations.
+     */
     protected function __init__()
     {
         if (! Constants::isValidEnv($this->env)) {
@@ -50,11 +65,25 @@ class Context
         }
     }
 
+    /**
+     * Returns the Context instance.
+     *
+     * @param string     $env
+     * @param array      $data
+     * @param array|null $logKeys
+     *
+     * @return Context
+     */
     public static function getInstance(string $env = Constants::ENV_DEV, array $data = [], ?array $logKeys = null): self
     {
         return new self($env, $data, $logKeys);
     }
 
+    /**
+     * Return the configs.
+     *
+     * @return ConfigLoader
+     */
     public function getConfig()
     {
         if (isset($this->config)) {
@@ -78,11 +107,24 @@ class Context
         $this->logKeys = $keys;
     }
 
+    /**
+     * Convert the context data to a string representation.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return json_encode($this->getValues());
     }
 
+    /**
+     * Get the values to be logged or returned.
+     *
+     * If logKeys are set, only those keys will be returned.
+     * Otherwise, all context data will be returned.
+     *
+     * @return array
+     */
     public function getValues()
     {
         if (is_null($this->logKeys)) {
@@ -92,6 +134,11 @@ class Context
         return array_intersect_key($this->getData(), array_flip($this->logKeys));
     }
 
+    /**
+     * Get the context data.
+     *
+     * @return array
+     */
     public function getData()
     {
         return $this->data;
@@ -165,5 +212,17 @@ class Context
         }
 
         return array_intersect_key($this->getValues(), array_flip($this->logKeys));
+    }
+
+    /**
+     * Returns logger
+     *
+     * @param string $name
+     *
+     * @return \System\Core\Base\Log\Logger
+     */
+    public function getLogger(string $name = 'log')
+    {
+        return Container::get($name);
     }
 }

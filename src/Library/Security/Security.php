@@ -16,16 +16,16 @@ class Security
     /**
      * Instantiate the new security instance
      *
-     * @param string $method  Method name
-     * @param string $key     Key
-     * @param int    $options Options
-     * @param string $iv      Initialization vector
+     * @param string      $method  Method name
+     * @param string|null $key     Key
+     * @param int         $options Options
+     * @param string|null $iv      Initialization vector
      */
     public function __construct(
         string $method = 'aes-128-cbc',
-        string $key = null,
+        ?string $key = null,
         int $options = 0,
-        string $iv = null
+        ?string $iv = null
     ) {
         $this->_method = $method;
         $this->_key = ($key != null) ? $key : random_bytes(32);

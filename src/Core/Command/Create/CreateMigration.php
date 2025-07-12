@@ -40,14 +40,21 @@ class CreateMigration extends Create
         $this->createMigration($name);
         $this->showSuccess('Migration created successfully');
     }
+
+    /**
+     * Creates a new migration file.
+     *
+     * @param string $name
+     *
+     * @return void
+     */
     private function createMigration(string $name): void
     {
-        $migrationsDir = $this->getConfig()->get('migration', [])['path'] ?? null;
+        $migrationConfig = $this->getConfig()->get('migration', []);
+        $migrationsDir = $migrationConfig['path'] ?? null;
 
         if (!$migrationsDir) {
             $this->error('Migration path is not configured');
-
-            return;
         }
         $filePath = $migrationsDir . '/' . $name;
 
@@ -76,8 +83,6 @@ class CreateMigration extends Create
 
         if (file_exists($filePath)) {
             $this->error("Migration file already exists: $filePath");
-
-            return;
         }
 
         // Write the file

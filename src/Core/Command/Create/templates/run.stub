@@ -5,7 +5,11 @@ use Loader\Container;
 use System\App;
 use System\Core\Base\Context\ConsoleContext;
 
-require_once __DIR__ . '/index.php';
+define('APP_DIR', __DIR__);
+define('ENV', 'dev');
+define('SUPPRESS_SYSTEM_ERRORS', false);
+
+require_once __DIR__ . '/../vendor/autoload.php';
 
 array_shift($argv);
 $args = $argv;
@@ -24,11 +28,11 @@ if (empty($commandName)) {
 
 
 $toolCommands = [
-    'phpstan'      => BASE_DIR .'vendor/bin/phpstan',
-    'cs-fixer'     => BASE_DIR .'vendor/bin/php-cs-fixer',
-    'php-cs-fixer' => BASE_DIR .'vendor/bin/php-cs-fixer',
-    'test'         => BASE_DIR .'vendor/bin/phpunit',
-    'phpunit'      => BASE_DIR .'vendor/bin/phpunit',
+    'phpstan'      => 'vendor/bin/phpstan',
+    'cs-fixer'     => 'vendor/bin/php-cs-fixer',
+    'php-cs-fixer' => 'vendor/bin/php-cs-fixer',
+    'test'         => 'vendor/bin/phpunit',
+    'phpunit'      => 'vendor/bin/phpunit',
 ];
 
 $toolCommand = $toolCommands[$commandName] ?? null;
@@ -37,17 +41,15 @@ if (isset($toolCommand)) {
     passthru($toolCommand . ' ' . implode(' ', array_map('escapeshellarg', $args)));
     exit;
 }
-App::loadConfig(true);
-// prepare context data
 
-$context = [
+$context = ConsoleContext::getInstance( ENV, [
     'command' => $commandName,
     'action'  => array_shift($args),
     'args'    => $args,
-];
+]);
 
 Container::set('context', function() use ($context) {
-    return ConsoleContext::getInstance($context);
+    return $context;
 }, true);
 
 

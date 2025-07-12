@@ -2,10 +2,10 @@
 
 namespace System\Core\Base\Controller;
 
-use Loader\Config\ConfigLoader;
 use Loader\Container;
-use Loader\Loader;
+use Loader\Load;
 use Router\Request\Request;
+use System\Core\Base\Context\WebContext;
 use System\Core\Base\Model\Model;
 use System\Core\Base\Module\Module;
 use System\Core\Base\Service\Service;
@@ -41,21 +41,18 @@ class Controller
     protected $service;
 
     /**
-     * Loader class object
-     *
-     * @var Loader
-     */
-    protected $loader;
-
-    /**
      * Module class
      *
      * @var Module
      */
     protected $module;
 
-    protected $config;
+    /**
+     * @var Load
+     */
     protected $load;
+
+    protected $context;
 
     /**
      * Instantiate the Controller instance
@@ -66,28 +63,61 @@ class Controller
         $this->module = Container::get('module');
         $this->model = new Model();
         $this->service = new Service();
-        $this->input = Container::get(Request::class);
-        $this->config = ConfigLoader::getConfig('config');
-        $this->loader = $this->module->getLoader();
+        $this->input = Container::get('request');
         $this->load = $this->module->load;
-        Container::get('log')->info('The ' . static::class . ' class is initalized successfully');
+        $this->context = $this->module->getContext();
+        // $this->context->getLogger()->info('The ' . static::class . ' class is initalized successfully');
     }
 
+    /**
+     * Returns the context.
+     *
+     * @return WebContext
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * Set the model object
+     *
+     * @param Model $model
+     *
+     * @return void
+     */
     public function setModel(Model $model)
     {
         $this->model = $model;
     }
 
+    /**
+     * Set the service object
+     *
+     * @param Service $service
+     *
+     * @return void
+     */
     public function setService(Service $service)
     {
         $this->service = $service;
     }
 
+    /**
+     * Return the model object
+     *
+     * @return Model
+     */
     public function getModel(): Model
     {
         return $this->model;
     }
 
+    /**
+     * Return the service object
+     *
+     * @return Service
+     */
     public function getService(): Service
     {
         return $this->service;

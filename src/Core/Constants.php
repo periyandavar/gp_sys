@@ -52,6 +52,13 @@ final class Constants
     public const ENV = 'env';
     public const DB = 'db';
 
+    /**
+     * Check if the provided environment is valid.
+     *
+     * @param string $env
+     *
+     * @return bool
+     */
     public static function isValidEnv(string $env): bool
     {
         return in_array($env, self::VALID_ENV, true);

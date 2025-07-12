@@ -60,11 +60,6 @@ class Init extends Console
             'suppress_errors' => $suppressErrors,
         ], 'web index file');
 
-        $this->createFile('index.console.stub', 'console/index.php', [
-            'env' => $env,
-            'suppress_errors' => $suppressErrors,
-        ], 'web index file');
-
         $this->createFile('run.stub', 'console/run', [
         ], 'run file');
 
@@ -74,6 +69,18 @@ class Init extends Console
         $this->showInfo("For web access, use: php index.php\n");
     }
 
+    /**
+     * Creates necessary files.
+     *
+     * @param string $fileName
+     * @param string $outputFile
+     * @param array  $variables
+     * @param string $helpText
+     *
+     * @throws \RuntimeException
+     *
+     * @return void
+     */
     protected function createFile(string $fileName, string $outputFile, array $variables = [], $helpText = '')
     {
         $dir = __DIR__ . '/Create/templates/';

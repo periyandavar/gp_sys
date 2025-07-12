@@ -4,6 +4,13 @@ namespace System\Core\Http\Response;
 
 class RestResponse extends Response
 {
+    /**
+     * RestResponse constructor.
+     *
+     * @param int    $status  HTTP status code.
+     * @param array  $headers HTTP headers.
+     * @param string $body    Response body.
+     */
     public function __construct($status = 200, $headers = [], $body = '')
     {
         parent::__construct($status, $headers, $body, static::TYPE_JSON);
@@ -44,8 +51,8 @@ class RestResponse extends Response
     }
 
     /**
- * Send a response for a successful update.
- */
+     * Send a response for a successful update.
+     */
     public function updated($data = null): void
     {
         if ($data !== null) {
@@ -69,6 +76,12 @@ class RestResponse extends Response
         $this->json($body, $status);
     }
 
+    /**
+     * Handle exceptions and send an error response.
+     *
+     * @param  \Exception $e
+     * @return Response
+     */
     public function handleException(\Exception $e): Response
     {
         $this->setStatusCode(500);

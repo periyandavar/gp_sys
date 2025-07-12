@@ -31,6 +31,13 @@ class TemplateEngine
         $this->variables[$key] = $value;
     }
 
+    /**
+     * Render the template with assigned variables.
+     *
+     * @param  string             $template
+     * @return string
+     * @throws FrameworkException
+     */
     public function render(string $template): string
     {
         $content = $this->loadTemplate($template);

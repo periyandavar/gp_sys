@@ -135,6 +135,12 @@ class Utility
         return $db;
     }
 
+    /**
+     * Get the contents of a directory.
+     *
+     * @param  string $dir Directory path
+     * @return array
+     */
     public static function getDirContents(string $dir)
     {
         $files = [];
@@ -148,6 +154,13 @@ class Utility
         return $files;
     }
 
+    /**
+     * Convert an array to XML format.
+     *
+     * @param  array  $data        The data to convert.
+     * @param  string $rootElement The root element name.
+     * @return string The XML representation of the data.
+     */
     public static function arrayToXml($data, $rootElement = '<root/>')
     {
         $xml = new SimpleXMLElement($rootElement);
@@ -156,6 +169,12 @@ class Utility
         return $xml->asXML();
     }
 
+    /**
+     * Recursive function to convert an array to XML.
+     *
+     * @param array            $data The data to convert.
+     * @param SimpleXMLElement $xml  The XML element to append to.
+     */
     public static function arrayToXmlRecursive($data, &$xml)
     {
         foreach ($data as $key => $value) {
@@ -168,9 +187,15 @@ class Utility
         }
     }
 
-    public static function arrayToCsv($data)
+    /**
+     * Convert an array to CSV format.
+     *
+     * @param  array  $data The data to convert.
+     * @return string The CSV representation of the data.
+     */
+    public static function arrayToCsv(array $data)
     {
-        if (empty($data) || !is_array($data)) {
+        if (empty($data)) {
             return '';
         }
 
@@ -191,11 +216,23 @@ class Utility
         return ob_get_clean();
     }
 
+    /**
+     * Convert an array to YAML format.
+     *
+     * @param  array  $data The data to convert.
+     * @return string The YAML representation of the data.
+     */
     public static function arrayToYaml($data)
     {
         return Yaml::dump($data);
     }
 
+    /**
+     * Check if an array is associative.
+     *
+     * @param  array $array The array to check.
+     * @return bool  True if the array is associative, false if it is sequential.
+     */
     public static function isAssociative($array)
     {
         if (empty($array)) {
@@ -209,6 +246,13 @@ class Utility
         return $keys !== range(0, count($array) - 1);
     }
 
+    /**
+     * Check if the file is a static file
+     *
+     * @param string $file File name
+     *
+     * @return bool
+     */
     public static function isStaticFile($file)
     {
         $staticFiles = [
@@ -223,6 +267,11 @@ class Utility
         return in_array($extension, $staticFiles);
     }
 
+    /**
+     * Generate a CSRF token.
+     *
+     * @return string
+     */
     public static function generateCsrfToken(): string
     {
         if (!isset($_SESSION['csrf_token'])) {
@@ -240,12 +289,17 @@ class Utility
         return self::getCsrfToken();
     }
 
+    /**
+     * Get the CSRF token from the session.
+     *
+     * @return string|null
+     */
     public static function getCsrfToken(): ?string
     {
         /**
          * @var Request $request
          */
-        $request = Container::get(Request::class);
+        $request = Container::get('request');
 
         return $request->session('csrf_token', '');
     }
@@ -264,6 +318,12 @@ class Utility
         return $array[$key] ?? $default;
     }
 
+    /**
+     * Get the current context.
+     *
+     * @return Context
+     * @throws FrameworkException
+     */
     public static function getContext(): Context
     {
         $context = Container::get('context');
