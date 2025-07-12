@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b641f7e1cbf8b69ec5ad3a161e7a691",
+    "content-hash": "c8d6d5875106a7cc7d9e6a69e2a20bbc",
     "packages": [
         {
             "name": "fpdf/fpdf",
@@ -61,16 +61,16 @@
         },
         {
             "name": "gp/dbms",
-            "version": "1.0.8",
+            "version": "1.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/periyandavar/gp_dbms",
-                "reference": "5f4315490600973a3c67a761819ee0a727ae6443"
+                "reference": "cc5188961f910e14c0b5d38c9cea465529ef4611"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/periyandavar/gp_dbms/zipball/5f4315490600973a3c67a761819ee0a727ae6443",
-                "reference": "5f4315490600973a3c67a761819ee0a727ae6443",
+                "url": "https://api.github.com/repos/periyandavar/gp_dbms/zipball/cc5188961f910e14c0b5d38c9cea465529ef4611",
+                "reference": "cc5188961f910e14c0b5d38c9cea465529ef4611",
                 "shasum": ""
             },
             "require": {
@@ -101,7 +101,7 @@
                 }
             ],
             "description": "Simple PHP Database tool with QueryParam class supports mysqli and pdo",
-            "time": "2025-06-01T08:32:47+00:00"
+            "time": "2025-07-12T18:29:06+00:00"
         },
         {
             "name": "gp/loader",
