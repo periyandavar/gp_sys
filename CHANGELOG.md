@@ -2,7 +2,16 @@
 
 ## [Unreleased](https://github.com/periyandavar/gp_sys/tree/HEAD)
 
-[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.1...HEAD)
+[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.2...HEAD)
+
+**Merged pull requests:**
+
+- feat: add testcase [\#5](https://github.com/periyandavar/gp_sys/pull/5) ([periyandavar](https://github.com/periyandavar))
+- feat: update v2 [\#3](https://github.com/periyandavar/gp_sys/pull/3) ([periyandavar](https://github.com/periyandavar))
+
+## [0.0.2](https://github.com/periyandavar/gp_sys/tree/0.0.2) (2025-06-01)
+
+[Full Changelog](https://github.com/periyandavar/gp_sys/compare/0.0.1...0.0.2)
 
 **Merged pull requests:**
 
