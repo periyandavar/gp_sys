@@ -116,6 +116,8 @@ class Utility
      *
      * @param  string        $name
      * @return Database|null
+     * @param  string        $name
+     * @return Database|null
      */
     public static function getDb(string $name = 'default')
     {

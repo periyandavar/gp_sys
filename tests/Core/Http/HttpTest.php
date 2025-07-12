@@ -39,10 +39,16 @@ class HttpTest extends TestCase
         $restRequest = $this->getMockBuilder(RestRequest::class)
             ->onlyMethods(['server'])
             ->getMock();
-        $restRequest->method('server')->willReturnMap([
-            ['HTTP_AUTHORIZATION', 'Bearer token'],
-            ['REDIRECT_HTTP_AUTHORIZATION', null]
-        ]);
+        $restRequest->method('server')->willReturnCallback(function($key) {
+            if ($key === 'HTTP_AUTHORIZATION') {
+                return 'Bearer token';
+            }
+            if ($key === 'REDIRECT_HTTP_AUTHORIZATION') {
+                return null;
+            }
+
+            return null;
+        });
         $this->assertEquals('Bearer token', $restRequest->getAuthorization());
     }
 
@@ -60,11 +66,19 @@ class HttpTest extends TestCase
         $webRequest = $this->getMockBuilder(WebRequest::class)
             ->onlyMethods(['server'])
             ->getMock();
-        $webRequest->method('server')->willReturnMap([
-            ['HTTP_CLIENT_IP', '1.2.3.4'],
-            ['HTTP_X_FORWARDED_FOR', null],
-            ['REMOTE_ADDR', '5.6.7.8']
-        ]);
+        $webRequest->method('server')->willReturnCallback(function($key) {
+            if ($key === 'HTTP_CLIENT_IP') {
+                return '1.2.3.4';
+            }
+            if ($key === 'HTTP_X_FORWARDED_FOR') {
+                return null;
+            }
+            if ($key === 'REMOTE_ADDR') {
+                return '5.6.7.8';
+            }
+
+            return null;
+        });
         $this->assertEquals('1.2.3.4', $webRequest->getClientIp());
     }
 
@@ -91,10 +105,16 @@ class HttpTest extends TestCase
         $webRequest = $this->getMockBuilder(WebRequest::class)
             ->onlyMethods(['server'])
             ->getMock();
-        $webRequest->method('server')->willReturnMap([
-            ['HTTPS', 'on'],
-            ['SERVER_PORT', 443]
-        ]);
+        $webRequest->method('server')->willReturnCallback(function($key) {
+            if ($key === 'HTTPS') {
+                return 'on';
+            }
+            if ($key === 'SERVER_PORT') {
+                return 443;
+            }
+
+            return null;
+        });
         $this->assertTrue($webRequest->isSecure());
     }
 
@@ -112,6 +132,7 @@ class HttpTest extends TestCase
     {
         $restResponse = $this->getMockBuilder(RestResponse::class)
             ->onlyMethods(['setStatusCode', 'setBody', 'send'])
+            ->disableOriginalConstructor()
             ->getMock();
         $restResponse->expects($this->once())->method('setStatusCode')->with(200);
         $restResponse->expects($this->once())->method('setBody')->with(json_encode(['foo' => 'bar']));
@@ -123,6 +144,7 @@ class HttpTest extends TestCase
     {
         $restResponse = $this->getMockBuilder(RestResponse::class)
             ->onlyMethods(['setStatusCode', 'setHeader', 'setBody', 'send'])
+            ->disableOriginalConstructor()
             ->getMock();
         $restResponse->expects($this->once())->method('setStatusCode')->with(201);
         $restResponse->expects($this->once())->method('setHeader')->with('Location', '/resource');
@@ -135,6 +157,7 @@ class HttpTest extends TestCase
     {
         $restResponse = $this->getMockBuilder(RestResponse::class)
             ->onlyMethods(['setStatusCode', 'setBody', 'send'])
+            ->disableOriginalConstructor()
             ->getMock();
         $restResponse->expects($this->once())->method('setStatusCode')->with(204);
         $restResponse->expects($this->once())->method('setBody')->with('');
@@ -180,6 +203,7 @@ class HttpTest extends TestCase
     {
         $webResponse = $this->getMockBuilder(WebResponse::class)
             ->onlyMethods(['setHeader', 'setStatusCode', 'setBody', 'send'])
+            ->disableOriginalConstructor()
             ->getMock();
         $webResponse->expects($this->once())->method('setHeader')->with('Content-Type', 'text/html; charset=utf-8');
         $webResponse->expects($this->once())->method('setStatusCode')->with(200);
@@ -192,6 +216,7 @@ class HttpTest extends TestCase
     {
         $webResponse = $this->getMockBuilder(WebResponse::class)
             ->onlyMethods(['setStatusCode', 'html'])
+            ->disableOriginalConstructor()
             ->getMock();
         $e = new Exception('fail', 502);
         $webResponse->expects($this->once())->method('setStatusCode')->with(502);

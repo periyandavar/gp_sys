@@ -7,7 +7,6 @@ use Loader\Loader;
 use Router\Request\Request;
 use System\Core\Base\Controller\Controller;
 use System\Core\Base\Model\Model;
-use System\Core\Base\Module\Module;
 use System\Core\Base\Service\Service;
 use System\Core\Test\TestCase as TestTestCase;
 
@@ -36,6 +35,11 @@ class ControllerTest extends TestTestCase
 
     public function testControllerInitialization()
     {
+        $controller = $this->getMockForAbstractClass(Controller::class);
+        $this->assertInstanceOf(Controller::class, $controller);
+        $model = $this->getProperty($controller, 'model');
+        $this->assertInstanceOf(Model::class, $model);
+        $this->assertInstanceOf(Service::class, $this->getProperty($controller, 'service'));
         $controller = new Controller();
         $this->assertInstanceOf(Model::class, $controller->model);
         $this->assertInstanceOf(Service::class, $controller->service);
@@ -66,3 +70,4 @@ class ControllerTest extends TestTestCase
         $this->assertFalse(isset($controller->notset));
     }
 }
+

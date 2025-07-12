@@ -94,7 +94,7 @@ class DatabaseSession implements \SessionHandlerInterface
                 return '';
             }
 
-            return ($data = $this->security->decrypt($row->data)) ? $data : '';
+            return ($data = $this->security->decrypt($row->data)) ? (string) $data : '';
         } else {
             return '';
         }

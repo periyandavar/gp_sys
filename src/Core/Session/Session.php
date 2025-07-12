@@ -24,7 +24,7 @@ class Session
      */
     private function __construct()
     {
-        $config = ConfigLoader::getConfig('config')->getAll();
+        $config = ConfigLoader::getConfig(Constants::CONFIG)->getAll();
         try {
             $dir = $config['session_save_path'];
             if (!is_dir($dir)) {
