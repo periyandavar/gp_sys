@@ -13,13 +13,14 @@ use Loader\Container;
 use Router\Request\Request;
 use SimpleXMLElement;
 use Symfony\Component\Yaml\Yaml;
+use System\Core\Base\Context\Context;
 use System\Core\Exception\FrameworkException;
 
 /**
  * Utility Class offers various static functions
  *
  */
-final class Utility
+class Utility
 {
     /**
      * Returns the baseURL
@@ -259,5 +260,15 @@ final class Utility
     public static function coalesceArray(array $array, $key, $default = null)
     {
         return $array[$key] ?? $default;
+    }
+
+    public static function getContext(): Context
+    {
+        $context = Container::get('context');
+        if (!$context) {
+            throw new FrameworkException('Context not found');
+        }
+
+        return $context;
     }
 }

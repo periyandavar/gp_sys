@@ -5,7 +5,6 @@ namespace System\Core\Base\Controller;
 use Loader\Config\ConfigLoader;
 use Loader\Container;
 use Loader\Loader;
-use Logger\Log;
 use Router\Request\Request;
 use System\Core\Base\Model\Model;
 use System\Core\Base\Module\Module;
@@ -49,13 +48,6 @@ class Controller
     protected $loader;
 
     /**
-     * Log class instance
-     *
-     * @var Log
-     */
-    protected $log;
-
-    /**
      * Module class
      *
      * @var Module
@@ -78,10 +70,7 @@ class Controller
         $this->config = ConfigLoader::getConfig('config');
         $this->loader = $this->module->getLoader();
         $this->load = $this->module->load;
-        $this->log = Log::getInstance();
-        $this->log->info(
-            'The ' . static::class . ' class is initalized successfully'
-        );
+        Container::get('log')->info('The ' . static::class . ' class is initalized successfully');
     }
 
     public function setModel(Model $model)
@@ -92,5 +81,42 @@ class Controller
     public function setService(Service $service)
     {
         $this->service = $service;
+    }
+
+    /**
+     * Add new object to $_obj array
+     *
+     * @param string $name  name
+     * @param mixed  $value object
+     *
+     * @return void
+     */
+    final public function __set(string $name, $value)
+    {
+        $this->module->$name = $value;
+    }
+
+    /**
+     * Get the object
+     *
+     * @param string $name object name
+     *
+     * @return mixed
+     */
+    final public function __get($name)
+    {
+        return $this->module->$name;
+    }
+
+    /**
+     * Check the object is present or not
+     *
+     * @param string $name object name
+     *
+     * @return bool
+     */
+    final public function __isset(string $name): bool
+    {
+        return isset($this->module->$name);
     }
 }

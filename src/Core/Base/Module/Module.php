@@ -5,25 +5,47 @@ namespace System\Core\Base\Module;
 use Loader\Container;
 use Loader\Load;
 use Loader\Loader;
-use Logger\Log;
 use Router\Route;
 use Router\Router;
 use Router\Wrapper;
+use System\Core\Base\Log\Logger;
+use System\Core\Utility;
 
 class Module
 {
+    private $context;
     private $name;
     private $obj = [];
     private $loader = null;
+    private $container = [];
 
     private $base_path = '';
 
-    public Load $load;
+    public ?Load $load = null;
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function getLoad()
+    {
+        return $this->load;
+    }
+
+    public function get($name)
+    {
+        if (! isset($this->container[$name])) {
+            $this->container[$name] = Container::get($name);
+        }
+
+        return $this->container[$name];
+    }
 
     public function __construct($name)
     {
-        Log::getInstance()->info('Initializing the Moudle class : ' . static::class);
         $this->name = $name;
+        $this->context = Utility::getContext();
         $this->load = new Load();
         $app_dir = defined('APP_DIR') ? APP_DIR : '';
         $module_folder = ucfirst($this->name);
@@ -38,10 +60,13 @@ class Module
     {
         $url = parse_url($url)['path'] ?? '/';
 
-        Log::getInstance()->info('Running the module to execute the route', ['path' => $url]);
+        $this->getLogger()->info('Running the module to execute the route', ['path' => $url]);
+
+        $this->context->setModule($this->name);
+        $this->context->setRouter($url);
 
         $result = Router::run(false, $url);
-        Log::getInstance()->info('Routing success...!');
+        $this->getLogger()->info('Routing success...!');
 
         return $result;
     }
@@ -55,13 +80,13 @@ class Module
         }
 
         if (!is_array($routes)) {
-            Log::getInstance()->info('Included the routes...');
+            $this->getLogger()->info('Included the routes...');
 
             return;
         }
 
         if (empty($routes)) {
-            Log::getInstance()->info('No routes found, skipping loading routes...' . $routeFile);
+            $this->getLogger()->info('No routes found, skipping loading routes...' . $routeFile);
 
             return;
         }
@@ -72,7 +97,7 @@ class Module
             $prefix = substr($class_name, 0, -(strlen('\\Module'))) . '\\Controller';
         }
 
-        Log::getInstance()->info('setting the prefix for routes', ['module' => $this->name, 'prefix' => $prefix]);
+        $this->getLogger()->info('setting the prefix for routes', ['module' => $this->name, 'prefix' => $prefix]);
         foreach ($routes as $name => $route) {
             if ($route instanceof Route) {
                 $this->setRoute($route, $prefix);
@@ -122,19 +147,19 @@ class Module
         }
 
         if (empty($services)) {
-            Log::getInstance()->info('No services found, skipping loading services...');
+            $this->getLogger()->info('No services found, skipping loading services...');
 
             return;
         }
 
         if (!is_array($services)) {
-            Log::getInstance()->info('Services are included...');
+            $this->getLogger()->info('Services are included...');
 
             return;
         }
         Container::loadFromConfig($services);
 
-        Log::getInstance()->info('Services are loaded...');
+        $this->getLogger()->info('Services are loaded...');
     }
 
     public function setupAutoLoad()
@@ -147,13 +172,18 @@ class Module
         }
 
         if (empty($autoloads)) {
-            Log::getInstance()->info('No autoload found, skipping loading autoloads...');
+            $this->getLogger()->info('No autoload found, skipping loading autoloads...');
 
             return;
         }
         $this->loader = Loader::autoLoadClass($this, $autoloads);
 
-        Log::getInstance()->info('Autoloaded the class...', ['autoload' => $autoloads]);
+        $this->getLogger()->info('Autoloaded the class...', ['autoload' => $autoloads]);
+    }
+
+    public function getLogger(string $name = 'log'): Logger
+    {
+        return $this->get($name);
     }
 
     public function getLoader()

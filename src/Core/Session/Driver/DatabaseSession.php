@@ -4,7 +4,7 @@ namespace System\Core\Session\Driver;
 
 use Database\Database;
 use System\Core\Utility;
-use System\Libraray\Security\Security;
+use System\Library\Security\Security;
 
 /**
  * DatabaseSession class, custom session handler
@@ -35,6 +35,13 @@ class DatabaseSession implements \SessionHandlerInterface
     public function connect()
     {
         $this->db = Utility::getDb();
+        $sql = "CREATE TABLE IF NOT EXISTS `{$this->_table}` (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            sessionId VARCHAR(128) NOT NULL UNIQUE,
+            access INT(11) NOT NULL,
+            data TEXT NOT NULL
+        )";
+        $this->db->query($sql);
     }
 
     /**
@@ -47,12 +54,12 @@ class DatabaseSession implements \SessionHandlerInterface
      */
     public function open($savePath, $sessionName): bool
     {
+        $this->_table = $savePath;
         $key = 'bRuD5WYw5wd0rdHR9yLlM6wt2vteuiniQBqE70nAuhU=';
         $iv = '1234567891011121';
         $method = 'aes-128-cbc';
         $this->security = new Security($method, $key, 0, $iv);
         $this->connect();
-        $this->_table = $savePath;
 
         return true;
     }

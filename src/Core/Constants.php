@@ -51,4 +51,9 @@ final class Constants
     public const CONFIG = 'config';
     public const ENV = 'env';
     public const DB = 'db';
+
+    public static function isValidEnv(string $env): bool
+    {
+        return in_array($env, self::VALID_ENV, true);
+    }
 }

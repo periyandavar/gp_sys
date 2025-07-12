@@ -182,7 +182,7 @@ class View
 
     protected function renderView(string $file, array $data = []): string
     {
-        $path = $this->config->get('view', '') . DIRECTORY_SEPARATOR . $file;
+        $path = $this->config->get('view', '') . DS . $file;
         $path = $this->handleExtension($path, 'php');
 
         if (!file_exists($path)) {
@@ -202,7 +202,7 @@ class View
 
     final public function renderScript(string $script)
     {
-        $scriptPath = $this->config->get('static', '') . DIRECTORY_SEPARATOR . 'js';
+        $scriptPath = $this->config->get('static', '') . DS . 'js';
         $this->handleExtension($scriptPath, 'js');
         $scriptPath = rtrim($scriptPath, '/') . '/' . $script;
 
@@ -211,7 +211,7 @@ class View
 
     final public function renderSheet(string $sheet)
     {
-        $sheetPath = $this->config->get('static', '') . DIRECTORY_SEPARATOR . 'css';
+        $sheetPath = $this->config->get('static', '') . DS . 'css';
         $this->handleExtension($sheetPath, 'css');
         $sheetPath = rtrim($sheetPath, '/') . '/' . $sheet;
 

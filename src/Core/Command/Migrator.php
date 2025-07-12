@@ -2,7 +2,6 @@
 
 namespace System\Core\Command;
 
-use Loader\Config\ConfigLoader;
 use System\Core\Console;
 use System\Core\Migration;
 use System\Core\Utility;
@@ -46,7 +45,7 @@ class Migrator extends Console
                 $this->rollback();
                 $this->showSuccess("Rollback completed successfully.\n");
             } catch (\Exception $e) {
-                $this->error('Error during rollback: ' . $e->getMessage() . "\n", $e->getCode(), $e);
+                $this->showError('Error during rollback: ' . $e->getMessage() . "\n");
             }
 
             return;
@@ -60,12 +59,6 @@ class Migrator extends Console
         } catch (\Exception $e) {
             $this->error('Error during migration: ' . $e->getMessage() . "\n", $e->getCode(), $e);
         }
-    }
-
-    private function getConfig()
-    {
-        return ConfigLoader::getConfig('config')
-            ?? ConfigLoader::getInstance(ConfigLoader::VALUE_LOADER);
     }
 
     private function getLastMigration()
@@ -94,7 +87,7 @@ class Migrator extends Console
         if (pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
             $file .= '.php';
         }
-        $migrationsDir = ConfigLoader::getConfig('config')->get('migrations', [])['migration_path'] ?? '';
+        $migrationsDir = $migrationsDir = $this->getConfig()->get('migration', [])['path'] ?? null;
         $file = $migrationsDir . DS . $file;
 
         if (!file_exists($file)) {
@@ -122,15 +115,22 @@ class Migrator extends Console
     {
         $config = $this->getConfig();
 
-        $migrationsDir = ConfigLoader::getConfig('config')->get('migrations', [])['migration_path'] ?? '';
+        $migrationsDir = $migrationsDir = $this->getConfig()->get('migration', [])['path'] ?? null;
 
         if (!is_dir($migrationsDir)) {
             throw new \RuntimeException("Migration path does not exist: $migrationsDir");
         }
 
-        $migrationFiles = glob($migrationsDir . '*.php');
+        $migrationFiles = glob("$migrationsDir/*.php");
+
+        if (empty($migrationFiles)) {
+            $this->showWarning("No migration files found in $migrationsDir\n");
+
+            return;
+        }
 
         foreach ($migrationFiles as $file) {
+            $this->showInfo('Processing migration file: ' . $file . "\n");
             require_once $file;
             $ns = $config->get('namespace', '');
             $className = $ns . basename($file, '.php');

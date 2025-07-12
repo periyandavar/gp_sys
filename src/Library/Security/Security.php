@@ -1,6 +1,6 @@
 <?php
 
-namespace System\Libraray\Security;
+namespace System\Library\Security;
 
 /**
  * Security class used to perform encryption and decryption

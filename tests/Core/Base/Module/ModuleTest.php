@@ -9,7 +9,7 @@ class ModuleTest extends TestCase
     {
         $module = new Module('Test');
         $this->assertEquals('Test', $module->getName());
-        $this->assertEquals('/src/Module/Test/',$module->getBasePath());
+        $this->assertEquals('/src/Module/Test/', $module->getBasePath());
     }
 
     // Add more tests for routes, services, autoload, etc.

@@ -2,7 +2,6 @@
 
 namespace System\Library\Curl;
 
-use Logger\Log;
 use stdClass;
 use System\Core\Utility;
 
@@ -94,7 +93,6 @@ class Response
 
         // Create an instance of the model
         $model = new $modelClass();
-        Log::getInstance()->info('llllllllllllll', [$data]);
         // Set the model attributes using the data from the response
         if (method_exists($model, 'setAttributes')) {
             $model->setAttributes($data ?? []);

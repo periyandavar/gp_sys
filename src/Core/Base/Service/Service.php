@@ -5,7 +5,6 @@ namespace System\Core\Base\Service;
 use Loader\Config\ConfigLoader;
 use Loader\Container;
 use Loader\Loader;
-use Logger\Log;
 use StdClass;
 
 /**
@@ -21,13 +20,6 @@ class Service
      * @var Loader
      */
     protected $loader;
-
-    /**
-     * Log class instance
-     *
-     * @var Log
-     */
-    protected $log;
     protected $load;
 
     public function __construct()
@@ -36,7 +28,6 @@ class Service
         $this->config = ConfigLoader::getConfig('config');
         $this->loader = $module->getLoader();
         $this->load = $module->load;
-        $this->log = Log::getInstance();
     }
 
     /**

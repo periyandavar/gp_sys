@@ -4,8 +4,10 @@ namespace System\Core\Session;
 
 use Exception;
 use Loader\Config\ConfigLoader;
-use Logger\Log;
+use Loader\Container;
 use System\Core\Exception\FrameworkException;
+use System\Core\Session\Driver\DatabaseSession;
+use System\Core\Session\Driver\FileSession;
 
 /**
  * Session class set and manage custom session handlers
@@ -24,36 +26,39 @@ class Session
     {
         $config = ConfigLoader::getConfig('config')->getAll();
         try {
+            $dir = $config['session_save_path'];
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
             session_save_path($config['session_save_path']);
+
             ini_set('session.gc_maxlifetime', $config['session_expiration']);
-            $file = 'src/system/core/session/'
-            . $config['session_driver']
-            . 'Session.php';
-            $class = $config['session_driver'] . 'session';
-            if (file_exists($file)) {
-                include_once "$file";
-                $class = "System\Core\\" . $class;
-                $this->_driver = new $class();
-            } else {
-                throw new FrameworkException('Invalid Driver', FrameworkException::INVALID_SESSION_ERROR);
+            // var_export($configp)
+            switch ($config['session_driver']) {
+                case 'file':
+                    $this->_driver = new FileSession();
+                    break;
+                case 'database':
+                    $this->_driver = new DatabaseSession();
+                    break;
+                default:
+                    throw new FrameworkException('Invalid Driver', FrameworkException::INVALID_SESSION_ERROR);
             }
-            if (isset($this->_driver)) {
-                session_set_save_handler(
-                    [$this->_driver, 'open'],
-                    [$this->_driver, 'close'],
-                    [$this->_driver, 'read'],
-                    [$this->_driver, 'write'],
-                    [$this->_driver, 'destroy'],
-                    [$this->_driver, 'gc']
-                );
-                register_shutdown_function('session_write_close');
-            }
+            session_set_save_handler(
+                [$this->_driver, 'open'],
+                [$this->_driver, 'close'],
+                [$this->_driver, 'read'],
+                [$this->_driver, 'write'],
+                [$this->_driver, 'destroy'],
+                [$this->_driver, 'gc']
+            );
+            register_shutdown_function('session_write_close');
         } catch (Exception $exception) {
-            Log::getInstance()->error(
+            Container::get('log')->error(
                 $exception->getMessage() . ' in ' . $exception->getFile()
                     . ' at line ' . $exception->getLine()
             );
-            Log::getInstance()->debug(
+            Container::get('log')->debug(
                 'Unable to Register the file session driver'
             );
         }

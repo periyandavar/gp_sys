@@ -2,12 +2,15 @@
 
 namespace System\Core;
 
-use Error;
 use Exception;
+use Loader\Container;
 use System\Core\Exception\ConsoleException;
 
 abstract class Console
 {
+    protected $context;
+
+    protected $command;
     protected static string $name = '';
     protected string $description = '';
     protected array $arguments = [];
@@ -41,12 +44,12 @@ abstract class Console
 
     public function execute()
     {
-        // try {
-        $this->run();
-        // } catch (\Throwable $e) {
-        //     $this->showError($e->getMessage());
-        //     throw new ConsoleException('Error executing command: ' . $this->getName(), $e->getCode(), $e);
-        // }
+        try {
+            $this->run();
+        } catch (\Throwable $e) {
+            $this->showError($e->getMessage());
+            throw new ConsoleException('Error executing command: ' . $this->getName() . " : {$e->getMessage()}", $e->getCode(), $e);
+        }
     }
 
     /**
@@ -56,9 +59,17 @@ abstract class Console
 
     public function __construct()
     {
-        global $argv;
-        $this->args = $argv ?? [];
+        // global $argv;
+        $this->context = $this->get('context');
+        // $this->args = $argv ?? [];
+        $this->command = $this->getContext()->getCommand();
+        $this->args = $this->getContext()->getArgs();
         $this->parseArguments();
+    }
+
+    public function getCommand(): string
+    {
+        return $this->command;
     }
 
     protected function parseArguments()
@@ -67,7 +78,8 @@ abstract class Console
         $this->arguments = [];
 
         $args = $this->args;
-        array_shift($args); // Remove script name
+        // var_export($args);exit;
+        // array_shift($args); // Remove script name
 
         [$shortMap, $longMap] = $this->buildOptionMaps($this->options());
 
@@ -326,19 +338,35 @@ abstract class Console
 
     public static function getBuildInCommands(): array
     {
-        return require_once __DIR__ . '/Command/commands.php';
+        static $commands = require_once __DIR__ . '/Command/commands.php';
+
+        return $commands;
     }
 
-    public static function isBuildInCommand(string $name): bool
+    public static function isBuildInCommand(string $cname): bool
     {
-        $name = self::formatCommandName($name);
+        $name = self::formatCommandName($cname);
         $commands = self::getBuildInCommands();
 
-        return isset($commands[$name]);
+        $command = $commands[$name] ?? null;
+
+        if ($command === null) {
+            return false;
+        }
+
+        return $command::isValidSubCommand($cname);
+    }
+
+    public static function isValidSubCommand(string $name)
+    {
+        return count(explode(':', $name)) === 1;
     }
 
     public static function getCommandAction(string $name): ?string
     {
+        if (! self::isBuildInCommand($name)) {
+            return null;
+        }
         $name = self::formatCommandName($name);
         $commands = self::getBuildInCommands();
 
@@ -350,5 +378,25 @@ abstract class Console
         $name = explode(':', $name);
 
         return reset($name);
+    }
+
+    protected function getContext()
+    {
+        return $this->context;
+    }
+
+    protected function get($name)
+    {
+        return Container::get($name);
+    }
+
+    protected function getLogger($name = 'log')
+    {
+        return $this->get($name);
+    }
+
+    protected function getConfig()
+    {
+        return $this->getContext()->getConfig();
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-use System\Core\Test\TestCase;
 use System\Core\Http\Request\Request;
 use System\Core\Http\Request\RestRequest;
 use System\Core\Http\Request\WebRequest;
 use System\Core\Http\Response\Response;
 use System\Core\Http\Response\RestResponse;
 use System\Core\Http\Response\WebResponse;
+use System\Core\Test\TestCase;
 
 class HttpTest extends TestCase
 {

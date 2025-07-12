@@ -29,7 +29,7 @@ class Create extends Console
      */
     public function run(): void
     {
-        $command = reset($this->args);
+        $command = $this->getCommand();
 
         $action = str_replace(static::$name . ':', '', $command);
         $name = reset($this->arguments);
@@ -78,5 +78,22 @@ class Create extends Console
         }
 
         return $templateContent;
+    }
+
+    public static function isValidSubCommand(string $name)
+    {
+        $subCommands = [
+            'migration',
+            'module',
+            'command',
+        ];
+        $command = explode(':', $name);
+        array_shift($command);
+        if (count($command) > 1) {
+            return false;
+        }
+        $command = reset($command);
+
+        return in_array($command, $subCommands);
     }
 }

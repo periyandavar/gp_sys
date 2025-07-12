@@ -4,8 +4,10 @@ namespace System;
 
 use Loader\Config\ConfigLoader;
 use Loader\Container;
-use Logger\Log;
 use Router\Response\Response;
+use System\Core\Base\Context\ConsoleContext;
+use System\Core\Base\Context\Context;
+use System\Core\Base\Context\WebContext;
 use System\Core\Console;
 use System\Core\Constants;
 use System\Core\Exception\ConsoleException;
@@ -15,9 +17,39 @@ use System\Core\Utility;
 
 class App
 {
-    public static function run($handle_session = true)
+    private static Context $context;
+
+    private static function getContext()
     {
-        self::setUp();
+        if (!isset(self::$context)) {
+            self::$context = Utility::getContext();
+        }
+
+        return self::$context;
+    }
+    public static function run()
+    {
+        $context = self::getContext();
+        self::loadServices();
+        self::init();
+        if ($context instanceof ConsoleContext) {
+            return self::runConsole();
+        } elseif ($context instanceof WebContext) {
+            return self::runWebApp();
+        } else {
+            throw new FrameworkException('Invalid context type. Expected ConsoleContext or WebContext.', FrameworkException::INVALID_CONTEXT);
+        }
+    }
+
+    private static function loadServices()
+    {
+        $services = require_once 'config/services.php';
+        Container::loadFromConfig($services);
+    }
+
+    private static function runWebApp()
+    {
+        $handle_session = ConfigLoader::getConfig('config')->get('handle_session', true);
         if ($handle_session) {
             Session::getInstance(); // Initialize the Session
             session_start();
@@ -36,19 +68,19 @@ class App
         $moduleClass = "App\\Module\\$module\\Module";
 
         if (class_exists($moduleClass)) {
-            Log::getInstance()->info("Found the Module $moduleClass");
+            Container::get('log')->info("Found the Module $moduleClass");
 
             return self::runModule($module, $moduleClass, '/' . Utility::coalesceArray($parts, 1, ''));
         }
 
-        Log::getInstance()->info("Module class $moduleClass not found, checking for default module");
+        Container::get('log')->info("Module class $moduleClass not found, checking for default module");
         $defaultModule = ucfirst($config->get('default_module', ''));
 
         if ($defaultModule) {
             $moduleClass = "App\\Module\\$defaultModule\\Module";
 
             if (class_exists($moduleClass)) {
-                Log::getInstance()->info("Default Module class $moduleClass Found");
+                Container::get('log')->info("Default Module class $moduleClass Found");
                 $response = self::runModule($module, $moduleClass, $url_path);
 
                 return $response;
@@ -60,6 +92,16 @@ class App
         return $response;
     }
 
+    public static function getModuleClass($name)
+    {
+        return 'App\\Module\\' . ucfirst($name) . '\\Module';
+    }
+
+    public static function isValidModule(string $name)
+    {
+        return class_exists(self::getModuleClass($name));
+    }
+
     public static function runModule($module, $moduleClass, $url)
     {
         $url = empty($url) ? '/' : $url;
@@ -67,36 +109,15 @@ class App
 
         return $obj->run($url);
     }
-    private static function loadConfig($is_console = false)
+
+    public static function runConsole()
     {
-        $envs = Constants::CONFIG_OVER_WRITE;
-
-        foreach ($envs as $env) {
-            $ds = DIRECTORY_SEPARATOR;
-            $dir = __DIR__ . $ds . 'config' . $ds . $env . $ds;
-
-            $files = glob($dir . '*.php');
-            foreach ($files as $file) {
-                $name = pathinfo($file, PATHINFO_FILENAME);
-                ConfigLoader::loadConfig($file, $name, 'a');
-            }
-            $environment = defined('ENV') ? ENV : Constants::ENV_LOCAL;
-            if ($environment === $env) {
-                break;
-            }
+        $context = self::getContext();
+        if (! $context instanceof ConsoleContext) {
+            throw new FrameworkException('Invalid context type for console execution. Expected ConsoleContext.', FrameworkException::INVALID_CONTEXT);
         }
-
-        $config = $is_console ? __DIR__ . $ds . 'console' . $ds . 'config.php' : __DIR__ . $ds . 'src' . $ds . 'config.php';
-        if (file_exists($config)) {
-            ConfigLoader::loadConfig($config, 'config', 'a');
-        }
-    }
-
-    public static function runConsole($action, $argv = [])
-    {
-        self::loadConfig(true);
-        self::initRun();
-        $command = $action;
+        $command = $context->getAction();
+        $argv = $context->getArgv();
         $commandAction = Console::getCommandAction($command);
         if ($commandAction === null) {
             $appDir = defined('APP_DIR') ? APP_DIR : '';
@@ -110,25 +131,18 @@ class App
             throw new ConsoleException("Command $command not found. Please check the command name.");
         }
 
+        $context->set('command_class', $commandAction);
         $runner = Container::resolveClassConstructor($commandAction, $argv);
         $runner->execute();
     }
 
-    private static function initRun()
+    private static function init()
     {
+        self::setUpConfig();
         $config = ConfigLoader::getConfig('config');
         // set_exception_handler('exceptionHandler');
         // set_error_handler('errHandler');
         date_default_timezone_set($config->get('timezone', 'UTC'));
-        Log::getInstance();
-
-        $env = defined('ENV') ? ENV : 'dev';
-
-        $can_suppress_error = self::canSuppressErrors($env);
-        self::loadDbConfig();
-        if ($can_suppress_error) {
-            Log::getInstance()->info('The application is set to suppress the system error. only the serious system and the application error will be thrown.');
-        }
     }
 
     private static function handleEnv($env)
@@ -143,7 +157,7 @@ class App
                 error_reporting(0);
                 break;
             default:
-                Log::getInstance()->fatal('Invalid enviroment found');
+                Container::get('log')->critical('Invalid enviroment found');
                 header('HTTP/1.1 500 Internal Server Error');
                 die("Server Error: {$env}");
         }
@@ -164,38 +178,27 @@ class App
 
     public static function loadDbConfig()
     {
-        $appDir = defined('BASE_DIR') ? BASE_DIR : '';
         $env = defined('ENV') ? ENV : 'dev';
         $can_suppress_error = self::canSuppressErrors($env);
-        $db_config_file = $appDir . '/config/' . $env . '/db.php';
+        $db_config_file = 'config/' . $env . '/db.php';
         self::loadConfigFile($db_config_file, ConfigLoader::ARRAY_LOADER, Constants::DB, $can_suppress_error);
 
-        $app_const_file = $appDir . '/config/constants.php';
+        $app_const_file = 'config/constants.php';
         if (file_exists($app_const_file)) {
             include_once $app_const_file;
         }
     }
 
-    private static function setUp()
+    private static function setUpConfig()
     {
         $env = defined('ENV') ? ENV : 'dev';
-
-        $can_suppress_error = self::canSuppressErrors($env);
         self::handleEnv($env);
-
         $env_file = '.env';
+        $can_suppress_error = self::canSuppressErrors($env);
         self::loadConfigFile($env_file, ConfigLoader::ENV_LOADER, Constants::ENV, $can_suppress_error);
-        $appDir = defined('APP_DIR') ? APP_DIR : '';
-        $config_file = $appDir . '/config/' . $env . '/config.php';
-        $config = self::loadConfigFile($config_file, ConfigLoader::ARRAY_LOADER, Constants::CONFIG, $can_suppress_error);
         self::loadDbConfig();
-        set_exception_handler('exceptionHandler');
-        set_error_handler('errHandler');
-        date_default_timezone_set($config->get('timezone', 'UTC'));
-        Log::getInstance();
-
         if ($can_suppress_error) {
-            Log::getInstance()->info('The application is set to suppress the system error. only the serious system and the application error will be thrown.');
+            Container::get('log')->info('The application is set to suppress the system error. only the serious system and the application error will be thrown.');
         }
     }
 

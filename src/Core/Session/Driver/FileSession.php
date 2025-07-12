@@ -6,7 +6,7 @@
 
 namespace System\Core\Session\Driver;
 
-use System\Libraray\Security\Security;
+use System\Library\Security\Security;
 
 /**
  * Custom Session handler

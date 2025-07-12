@@ -15,7 +15,7 @@ class FrameworkException extends \Exception
 {
     public const UNKNOWN_ERROR = 1000;
     public const INVALID_ARGUMENT = 1001;
-
+    public const INVALID_CONTEXT = 1002;
     public const INVALID_SESSION_ERROR = 2000;
 
     public const DB_CONNECTION_ERROR = 2100;

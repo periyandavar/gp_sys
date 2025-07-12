@@ -4,85 +4,22 @@ namespace System\Core\Test;
 
 use Database\Database;
 use Database\DatabaseFactory;
-use Database\Driver\PdoDriver;
-use Loader\Config\ConfigLoader;
 use Loader\Container;
-use Loader\Load;
-use Loader\Loader;
-use Logger\Log;
 use Mockery;
-use Router\Request\Request as RequestRequest;
 use System\Core\Base\Module\Module;
-use System\Core\Http\Request\Request;
-use System\Core\Http\Response\Response;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-
-
-    protected $db;
-
-    protected $module;
-
-    protected $load;
-    protected $loader;
-    public function getDb() {
-        return $this->db;
-    }
-
-    public function __construct(string|null $name = null, array $data = [], $dataName = '')
+    public function mockDb($key = 'default', $db = null)
     {
-        // $log = Mockery::mock('overload:'.Log::class);
-        // $log->shouldReceive('getInstance')->andReturn($log);
-        // $log->shouldReceive('info')->andReturn($log);
-        // $log = Mockery::mock('overload:' . Log::class);
-        // $log->shouldReceive('getInstance')->andReturnSelf();
-        // $log->shouldReceive('info')->andReturn(true);
-        // $this->db = Mockery::mock(PdoDriver::class);
-        // $this->module = new Module('');
-        // $this->load = Mockery::mock(Load::class);
-        // $this->loader = Mockery::mock(Loader::class);
-        // $this->setProperty($this->module, 'load', $this->load);
-        // $this->setProperty($this->module, 'loader', $this->loader);
-        // Container::set('module', $this->module);
-        // Container::set('db', $this->db);
-        // Container::set(RequestRequest::class, new Request());
-        // Container::set(Response::class, new Response());
-        // ConfigLoader::getInstance(ConfigLoader::VALUE_LOADER, [], 'config');
-        // ConfigLoader::getInstance(ConfigLoader::VALUE_LOADER, [], 'db');
-        parent::__construct($name, $data, $dataName);
-        // $dbf = Mockery::mock('overload:'.DatabaseFactory::class);
-        // $dbf->shouldReceive('setUpConfig')->andReturn();
-        // $dbf->shouldReceive('get')->andReturn($this->db);
-    }
+        if ($db === null) {
+            $db = Mockery::mock(Database::class)->makePartial();
+        }
 
+        DatabaseFactory::set($key, $db);
 
-    protected function setUp(): void
-    {
-        $log = Mockery::mock('overload:' . Log::class);
-        $log->shouldReceive('getInstance')->andReturnSelf();
-        $log->shouldReceive('info')->andReturn(true);
-        $this->db = Mockery::mock(PdoDriver::class);
-        $this->module = new Module('');
-        $this->load = Mockery::mock(Load::class);
-        $this->loader = Mockery::mock(Loader::class);
-        $this->setProperty($this->module, 'load', $this->load);
-        $this->setProperty($this->module, 'loader', $this->loader);
-        Container::set('module', $this->module);
-        Container::set('db', $this->db);
-        Container::set(RequestRequest::class, new Request());
-        Container::set(Response::class, new Response());
-        ConfigLoader::getInstance(ConfigLoader::VALUE_LOADER, [], 'config');
-        ConfigLoader::getInstance(ConfigLoader::VALUE_LOADER, [], 'db');
-        // parent::__construct($name, $data, $dataName);
-        $dbf = Mockery::mock('overload:'.DatabaseFactory::class);
-        $dbf->shouldReceive('setUpConfig')->andReturn();
-        $dbf->shouldReceive('get')->andReturn($this->db);
+        return $db;
     }
-    public function getModule() {
-        return $this->module;
-    }
-
 
     /**
      * Invoke a private or protected method on an object.
@@ -132,57 +69,28 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return $property->getValue($object);
     }
 
-    /**
-     * Create a mock for the given class using Mockery.
-     *
-     * @param string $class The class name to mock.
-     * @param array $constructorArgs Optional constructor arguments.
-     * @return \Mockery\MockInterface
-     */
-    protected function getMock(string $class, array $constructorArgs = [])
+    protected function setContainer(array $services)
     {
-        if (!class_exists(\Mockery::class)) {
-            throw new \RuntimeException('Mockery is not installed. Run "composer require --dev mockery/mockery".');
+        foreach ($services as $name => $value) {
+            Container::set($name, $value);
         }
-
-        if (empty($constructorArgs)) {
-            return \Mockery::mock($class);
-        }
-        return \Mockery::mock($class, $constructorArgs);
     }
 
-    /**
-     * Clean up Mockery after each test.
-     */
-    protected function tearDown(): void
+    protected function addMockService(array $services)
     {
-        if (class_exists(\Mockery::class)) {
-            \Mockery::close();
+        foreach ($services as $name => $value) {
+            if (is_callable($value)) {
+                $value = $value();
+            }
+            if (is_string($value)) {
+                $value = Mockery::mock($value);
+            }
+            Container::set($name, $value);
         }
-        parent::tearDown();
     }
 
-     /**
-     * Create a mock for the Database class.
-     *
-     * @param array $methods Methods to mock.
-     * @return \Mockery\MockInterface
-     */
-    protected function mockDatabase(array $methods = [])
+    protected function moduleMock()
     {
-        $dbClass = '\\System\\Core\\DB\\Database';
-        if (!class_exists($dbClass)) {
-            throw new \RuntimeException('Database class not found: ' . $dbClass);
-        }
-        return empty($methods)
-            ? $this->getMock($dbClass)
-            : $this->getMock($dbClass)->shouldAllowMockingProtectedMethods()->makePartial()->shouldReceive(...$methods)->getMock();
-    }
-
-    protected function containerMock($module, $db)
-    {
-        // $container = Mockery::mock('alias:overload:'. Container::class);
-        // $container->shouldReceive('get')->with('module')->andReturn($module);
-        // $container->shouldReceive('get')->with('db')->andReturn($db);
+        return Mockery::mock(Module::class)->makePartial();
     }
 }

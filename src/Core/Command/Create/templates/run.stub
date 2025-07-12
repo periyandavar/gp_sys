@@ -1,7 +1,9 @@
 #!/usr/bin/env php
 <?php
 
+use Loader\Container;
 use System\App;
+use System\Core\Base\Context\ConsoleContext;
 
 require_once __DIR__ . '/index.php';
 
@@ -35,8 +37,19 @@ if (isset($toolCommand)) {
     passthru($toolCommand . ' ' . implode(' ', array_map('escapeshellarg', $args)));
     exit;
 }
+App::loadConfig(true);
+// prepare context data
+
+$context = [
+    'command' => $commandName,
+    'action'  => array_shift($args),
+    'args'    => $args,
+];
+
+Container::set('context', function() use ($context) {
+    return ConsoleContext::getInstance($context);
+}, true);
 
 
-$action = array_shift($args);
-App::runConsole($action, $args);
 
+App::run();
