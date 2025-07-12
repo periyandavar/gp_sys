@@ -45,6 +45,13 @@ class CreateCommand extends Create
         $this->showSuccess('Command created successfully');
     }
 
+    /**
+     * Creates a new command file.
+     *
+     * @param string $name
+     *
+     * @return void
+     */
     private function createCommand(string $name): void
     {
         $commandsDir = defined('APP_DIR') ? APP_DIR : '';
@@ -87,6 +94,13 @@ class CreateCommand extends Create
         $this->showMessage('Command file created at: ' . $filePath);
     }
 
+    /**
+     * Create command list content for the commands.php file.
+     *
+     * @param array $commands
+     *
+     * @return string
+     */
     private function createCommandListContent(array $commands): string
     {
         $content = "<?php\n\nreturn [";

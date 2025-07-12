@@ -19,6 +19,13 @@ class WebException extends FrameworkException
 
     protected int $statusCode;
 
+    /**
+     * WebException constructor.
+     *
+     * @param string          $message    The error message.
+     * @param int             $statusCode The HTTP status code.
+     * @param \Throwable|null $previous   The previous exception, if any.
+     */
     public function __construct(
         string $message = '',
         int $statusCode = self::INTERNAL_SERVER_ERROR,
@@ -28,6 +35,11 @@ class WebException extends FrameworkException
         parent::__construct($message, $statusCode, $previous);
     }
 
+    /**
+     * Get the HTTP status code.
+     *
+     * @return int
+     */
     public function getStatusCode(): int
     {
         return $this->statusCode;

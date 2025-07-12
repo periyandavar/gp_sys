@@ -5,6 +5,12 @@ use System\Core\Test\TestCase;
 
 class RunnerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->context->shouldReceive('getCommand')->andReturn('testCommand');
+        $this->context->shouldReceive('getArgs')->andReturn([]);
+    }
     public function testOptionsContainCmd()
     {
         $runner = new Runner();
@@ -14,15 +20,15 @@ class RunnerTest extends TestCase
 
     public function testRunShowsWarningIfNoCommand()
     {
-        $runner = $this->getMockBuilder(Runner::class)
-            ->onlyMethods(['showWarning'])
-            ->getMock();
+        $runner = Mockery::mock(Runner::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
 
-        $runner->expects($this->once())
-            ->method('showWarning')
+        $runner->shouldReceive('get')->with('context')->andReturn($this->getConsoleContext());
+        $runner->shouldReceive('showWarning')
             ->with($this->stringContains('No command specified'));
 
         // Simulate no command option
-        $runner->run();
+        $this->assertNull($runner->run());
     }
 }

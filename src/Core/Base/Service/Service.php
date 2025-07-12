@@ -2,41 +2,20 @@
 
 namespace System\Core\Base\Service;
 
-use Loader\Config\ConfigLoader;
 use Loader\Container;
-use Loader\Loader;
-use Logger\Log;
 use StdClass;
+use System\Core\Base\Context\Context;
 
 /**
  * BaseService class, Base class for all services
  */
 class Service
 {
-    protected $config;
-
-    /**
-     * Loader class object
-     *
-     * @var Loader
-     */
-    protected $loader;
-
-    /**
-     * Log class instance
-     *
-     * @var Log
-     */
-    protected $log;
-    protected $load;
+    protected Context $context;
 
     public function __construct()
     {
-        $module = Container::get('module');
-        $this->config = ConfigLoader::getConfig('config');
-        $this->loader = $module->getLoader();
-        $this->load = $module->load;
-        $this->log = Log::getInstance();
+        $this->context = Container::get('context');
     }
 
     /**

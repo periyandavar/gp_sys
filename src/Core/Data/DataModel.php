@@ -6,6 +6,13 @@ use Router\Request\Model\Model;
 
 class DataModel extends \Database\Orm\Model implements Model
 {
+    /**
+     * Set the values
+     *
+     * @param array $values
+     *
+     * @return void
+     */
     public function setValues(array $values)
     {
         foreach ($values as $key => $value) {
@@ -15,6 +22,11 @@ class DataModel extends \Database\Orm\Model implements Model
         }
     }
 
+    /**
+     * Get the values
+     *
+     * @return array
+     */
     public function getValues(): array
     {
         $data = get_object_vars($this);

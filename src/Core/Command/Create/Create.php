@@ -29,7 +29,7 @@ class Create extends Console
      */
     public function run(): void
     {
-        $command = reset($this->args);
+        $command = $this->getCommand();
 
         $action = str_replace(static::$name . ':', '', $command);
         $name = reset($this->arguments);
@@ -63,6 +63,16 @@ class Create extends Console
         return;
     }
 
+    /**
+     * Returns the temaplate content for the specified file.
+     *
+     * @param string $fileName
+     * @param array  $variables
+     *
+     * @throws \RuntimeException
+     *
+     * @return string
+     */
     protected function getTemplate(string $fileName, array $variables = []): string
     {
         $templatePath = $this->template_dir . $fileName;
@@ -78,5 +88,29 @@ class Create extends Console
         }
 
         return $templateContent;
+    }
+
+    /**
+     * Checks if the subcommand is valid.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function isValidSubCommand(string $name)
+    {
+        $subCommands = [
+            'migration',
+            'module',
+            'command',
+        ];
+        $command = explode(':', $name);
+        array_shift($command);
+        if (count($command) > 1) {
+            return false;
+        }
+        $command = reset($command);
+
+        return in_array($command, $subCommands);
     }
 }

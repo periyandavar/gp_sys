@@ -12,6 +12,11 @@ class Curl
 
     private array $data = [];
 
+    /**
+     * Constructor for Curl.
+     *
+     * @param string $base_url
+     */
     public function __construct(string $base_url)
     {
         $this->base_url = $base_url;

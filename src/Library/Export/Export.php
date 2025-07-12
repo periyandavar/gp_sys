@@ -1,31 +1,10 @@
 <?php
 
-/**
- * Exporter
- * php version 7.3.5
- *
- * @category Exporter
- * @package  Library
- * @author   Periyandavar <periyandavar@gmail.com>
- * @license  http://license.com license
- * @link     http://url.com
- */
-
 namespace System\Library;
 
 use System\Libraray\Export\CsvExporter;
 use System\Libraray\Export\PdfExporter;
 
-/**
- * Exporter Class used to store the input Exporter
- * User defined Error controller should implement this interface
- *
- * @category Exporter
- * @package  Library
- * @author   Periyandavar <periyandavar@gmail.com>
- * @license  http://license.com license
- * @link     http://url.com
- */
 class Export
 {
     private $_exporter;

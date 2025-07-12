@@ -1,5 +1,7 @@
 <?php
 
+use Loader\Container;
+use System\Core\Base\Module\Module;
 use System\Core\Base\Service\Service;
 use System\Core\Test\TestCase;
 
@@ -30,6 +32,7 @@ class ServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        Container::set('module', Mockery::mock(Module::class));
         $this->service = new Service();
         $this->model = Mockery::mock(TestModel::class);
     }

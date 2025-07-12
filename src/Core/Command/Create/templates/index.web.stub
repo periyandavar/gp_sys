@@ -1,0 +1,50 @@
+<?php
+
+use Loader\Container;
+use Router\Response\Response;
+use System\App;
+use System\Core\Base\Context\WebContext;
+use System\Core\Utility;
+
+require 'vendor/autoload.php';
+
+define('APP_DIR', __DIR__);
+define('ENV', '{{env}}');
+define('SUPPRESS_SYSTEM_ERRORS', {{suppress_errors}});
+
+$requested = $_SERVER['REQUEST_URI'] ?? '';
+$path = parse_url($requested, PHP_URL_PATH);
+$file = __DIR__ . $path;
+
+if ($path !== '/' && is_file($file) && Utility::isStaticFile($file)) {
+    return false;
+}
+
+$url = $_SERVER['REQUEST_URI'];
+$url = str_replace('/index.php', '', $url);
+
+$context = WebContext::getInstance(ENV, [
+    WebContext::PARAM_URI => $url,
+]);
+
+Container::set('context', function() use ($context) {
+    return $context;
+});
+
+$output = App::run();
+
+if ($output instanceof Response) {
+    if ($output->getType() === null) {
+        $output->setType(Response::TYPE_HTML);
+    }
+    $output->send();
+
+    return;
+}
+
+$response = Container::get('response');
+$response->setBody($output);
+
+ob_start();
+ob_end_clean();
+$response->send();

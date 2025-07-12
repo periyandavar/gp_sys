@@ -2,12 +2,17 @@
 
 namespace System\Core;
 
-use Error;
 use Exception;
+use Loader\Container;
+use System\Core\Base\Context\ConsoleContext;
+use System\Core\Base\Module\ConsoleModule;
 use System\Core\Exception\ConsoleException;
 
 abstract class Console
 {
+    protected $context;
+    protected $module;
+    protected $command;
     protected static string $name = '';
     protected string $description = '';
     protected array $arguments = [];
@@ -41,12 +46,12 @@ abstract class Console
 
     public function execute()
     {
-        // try {
-        $this->run();
-        // } catch (\Throwable $e) {
-        //     $this->showError($e->getMessage());
-        //     throw new ConsoleException('Error executing command: ' . $this->getName(), $e->getCode(), $e);
-        // }
+        try {
+            $this->run();
+        } catch (\Throwable $e) {
+            $this->showError($e->getMessage());
+            throw new ConsoleException('Error executing command: ' . $this->getName() . " : {$e->getMessage()}", $e->getCode(), $e);
+        }
     }
 
     /**
@@ -56,18 +61,42 @@ abstract class Console
 
     public function __construct()
     {
-        global $argv;
-        $this->args = $argv ?? [];
+        $this->context = $this->get('context');
+        $this->command = $this->getContext()->getCommand();
+        $this->module = new ConsoleModule($this->command);
+        $this->args = $this->getContext()->getArgs();
         $this->parseArguments();
     }
 
+    /**
+     * Returns the context instance.
+     *
+     * @return ConsoleModule
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * Returns the command name.
+     *
+     * @return string
+     */
+    public function getCommand(): string
+    {
+        return $this->command;
+    }
+
+    /**
+     * parse the command line arguments.
+     */
     protected function parseArguments()
     {
         $this->options = [];
         $this->arguments = [];
 
         $args = $this->args;
-        array_shift($args); // Remove script name
 
         [$shortMap, $longMap] = $this->buildOptionMaps($this->options());
 
@@ -75,6 +104,13 @@ abstract class Console
         $this->applyDefaultOptions($this->options(), $shortMap);
     }
 
+    /**
+     * Builds short and long option maps from the options definition.
+     *
+     * @param array $optionsDef
+     *
+     * @return array
+     */
     private function buildOptionMaps(array $optionsDef): array
     {
         $shortMap = [];
@@ -89,6 +125,16 @@ abstract class Console
         return [$shortMap, $longMap];
     }
 
+    /**
+     * Parses the command line arguments and populates options and arguments.
+     *
+     * @param array $args
+     * @param array $optionsDef
+     * @param array $shortMap
+     * @param array $longMap
+     *
+     * @return void
+     */
     private function parseArgsLoop(array $args, array $optionsDef, array $shortMap, array $longMap): void
     {
         $i = 0;
@@ -106,6 +152,14 @@ abstract class Console
         }
     }
 
+    /**
+     * Parses a long option from the command line arguments.
+     *
+     * @param string $arg
+     * @param array  $longMap
+     *
+     * @return void
+     */
     private function parseLongOption(string $arg, array $longMap): void
     {
         $eqPos = strpos($arg, '=');
@@ -121,6 +175,16 @@ abstract class Console
         }
     }
 
+    /**
+     * Parses a short option from the command line arguments.
+     *
+     * @param array $args
+     * @param int   $i
+     * @param array $optionsDef
+     * @param array $shortMap
+     *
+     * @return int
+     */
     private function parseShortOption(array $args, int $i, array $optionsDef, array $shortMap): int
     {
         $arg = $args[$i];
@@ -144,6 +208,14 @@ abstract class Console
         return $consumed;
     }
 
+    /**
+     * Applies default options to the command line arguments.
+     *
+     * @param array $optionsDef
+     * @param array $shortMap
+     *
+     * @return void
+     */
     private function applyDefaultOptions(array $optionsDef, array $shortMap): void
     {
         foreach ($optionsDef as $long => $opt) {
@@ -160,6 +232,10 @@ abstract class Console
     }
     /**
      * Extracts positional arguments from $argv.
+     *
+     * @param array $parsedOptions
+     *
+     * @return array
      */
     protected function extractPositionalArguments(array $parsedOptions): array
     {
@@ -183,6 +259,10 @@ abstract class Console
 
     /**
      * Retrieves the value of a specific option.
+     *
+     * @param string $key
+     *
+     * @return mixed
      */
     public function getOption(string $key): mixed
     {
@@ -215,6 +295,10 @@ abstract class Console
 
     /**
      * Retrieves the value of a specific positional argument.
+     *
+     * @param int $index
+     *
+     * @return mixed
      */
     public function getArgument(int $index): mixed
     {
@@ -223,6 +307,8 @@ abstract class Console
 
     /**
      * Displays help information for the command.
+     *
+     * @return void
      */
     public function displayHelp(): void
     {
@@ -231,6 +317,12 @@ abstract class Console
         $this->showMessage($help);
     }
 
+    /**
+     * Handles the help command.
+     * If the 'h' option is set, it displays the help information.
+     *
+     * @return void
+     */
     public function handleHelp()
     {
         if ($this->getOption('h')) {
@@ -240,6 +332,11 @@ abstract class Console
         }
     }
 
+    /**
+     * Returns the help message for the command.
+     *
+     * @return string
+     */
     public function getHelp()
     {
         $msg = '';
@@ -252,6 +349,11 @@ abstract class Console
         return $msg;
     }
 
+    /**
+     * Returns the help message for the command options.
+     *
+     * @return string
+     */
     public function getCmdHelp()
     {
         $msg = "Options:\n";
@@ -289,66 +391,208 @@ abstract class Console
         echo "{$color}{$message}{$reset}\n";
     }
 
+    /**
+     * Show an error message and throw an exception.
+     *
+     * @param string $message
+     *
+     * @throws Exception
+     */
     public function showError(string $message)
     {
         $this->showMessage($message, 'error');
     }
 
+    /**
+     * Show a warning message.
+     *
+     * @param string $message
+     *
+     * @return void
+     */
     public function showWarning(string $message)
     {
         $this->showMessage($message, 'warning');
     }
 
+    /**
+     * Show an info message.
+     *
+     * @param string $message
+     *
+     * @return void
+     */
     public function showInfo(string $message)
     {
         $this->showMessage($message, 'info');
     }
 
+    /**
+     * Show a success message.
+     *
+     * @param string $message
+     *
+     * @return void
+     */
     public function showSuccess(string $message)
     {
         $this->showMessage($message, 'success');
     }
 
+    /**
+     * Show a loading message.
+     *
+     * @param string $message
+     *
+     * @return void
+     */
     public function showLoading(string $message)
     {
         $this->showMessage($message, 'loading');
     }
 
+    /**
+     * Thorw error with a message.
+     * @param  string     $message
+     * @param  mixed      $code
+     * @param  mixed      $exception
+     * @throws \Exception
+     *
+     * @return never
+     */
     public function error(string $message, $code = 0, $exception = null)
     {
         throw new Exception($message, $code, $exception);
     }
 
+    /**
+     * Returns the name of the command.
+     *
+     * @return string
+     */
     public static function getName(): string
     {
         return static::$name;
     }
 
+    /**
+     * Get build-in commands.
+     *
+     * @return array
+     */
     public static function getBuildInCommands(): array
     {
-        return require_once __DIR__ . '/Command/commands.php';
+        static $commands = require_once __DIR__ . '/Command/commands.php';
+
+        return $commands;
     }
 
-    public static function isBuildInCommand(string $name): bool
+    /**
+     * Check if the command is a build-in command.
+     *
+     * @param string $cname The command name.
+     *
+     * @return bool
+     */
+    public static function isBuildInCommand(string $cname): bool
     {
-        $name = self::formatCommandName($name);
+        $name = self::formatCommandName($cname);
         $commands = self::getBuildInCommands();
 
-        return isset($commands[$name]);
+        $command = $commands[$name] ?? null;
+
+        if ($command === null) {
+            return false;
+        }
+
+        return $command::isValidSubCommand($cname);
     }
 
+    /**
+     * Check if the command is a valid sub-command.
+     *
+     * @param string $name The command name.
+     *
+     * @return bool
+     */
+    public static function isValidSubCommand(string $name)
+    {
+        return count(explode(':', $name)) === 1;
+    }
+
+    /**
+     * Get the action name for a command.
+     *
+     * @param string $name The command name.
+     *
+     * @return string|null
+     */
     public static function getCommandAction(string $name): ?string
     {
+        if (! self::isBuildInCommand($name)) {
+            return null;
+        }
         $name = self::formatCommandName($name);
         $commands = self::getBuildInCommands();
 
         return $commands[$name] ?? null;
     }
 
+    /**
+     * Format the command name to remove any sub-command parts.
+     *
+     * @param string $name The command name.
+     *
+     * @return string
+     */
     public static function formatCommandName(string $name): string
     {
         $name = explode(':', $name);
 
         return reset($name);
+    }
+
+    /**
+     * Get the context instance.
+     *
+     * @return ConsoleContext
+     */
+    protected function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * Get an object from the container.
+     *
+     * @param string $name The name of the object.
+     *
+     * @return mixed
+     */
+    protected function get($name)
+    {
+        return Container::get($name);
+    }
+
+    /**
+     * Get the logger instance.
+     *
+     * @param string $name The name of the logger.
+     *
+     * @return mixed
+     */
+    protected function getLogger($name = 'log')
+    {
+        return $this->get($name);
+    }
+
+    /**
+     * Get the configuration instance.
+     *
+     * @return mixed
+     */
+    protected function getConfig()
+    {
+        return $this->getContext()->getConfig();
     }
 }

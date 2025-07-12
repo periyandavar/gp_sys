@@ -12,7 +12,7 @@ class {{className}} extends Console
     /**
      * Define short and long options for getopt().
      */
-    public function options(): array
+    protected function options(): array
     {
         return [
             'help' => [

@@ -35,11 +35,11 @@ abstract class RestController extends Controller
     /**
      * Handles POST request
      *
-     * @return DataRecord|Response|null
+     * @return Record|Response|null
      */
     public function create(DataRecord $model)
     {
-        $model = $this->getModel();
+        $model = $this->getDataModel();
 
         if ($model->validate() === false) {
             /**
@@ -65,7 +65,7 @@ abstract class RestController extends Controller
      */
     public function update($id, DataRecord $model)
     {
-        $model = $this->getModel();
+        $model = $this->getDataModel();
         $old_model = $this->view($id);
         if (!$old_model) {
             throw new \Exception('Model not found with id: ' . $id);
@@ -99,7 +99,7 @@ abstract class RestController extends Controller
      */
     public function patch(int $id, DataRecord $model)
     {
-        $model = $this->getModel();
+        $model = $this->getDataModel();
         $old_model = $this->view($id);
         if (!$old_model) {
             throw new \Exception('Model not found with id: ' . $id);
@@ -119,6 +119,11 @@ abstract class RestController extends Controller
         return $old_model->reload();
     }
 
+    /**
+     * Handles GET request for listing all records
+     *
+     * @return DataRecord[]|Response
+     */
     public function list()
     {
         $model = $this->getModelName();
@@ -126,6 +131,12 @@ abstract class RestController extends Controller
         return $model::findAll();
     }
 
+    /**
+     * Returns the model class name.
+     *
+     * @return string
+     * @throws \Exception
+     */
     protected function getModelName()
     {
         if (empty($this->modelClass)) {
@@ -135,7 +146,13 @@ abstract class RestController extends Controller
         return $this->modelClass;
     }
 
-    protected function getModel()
+    /**
+     * Returns the data model with values from the request.
+     *
+     * @return Record
+     * @throws \Exception
+     */
+    protected function getDataModel()
     {
         $modelName = $this->getModelName();
         if (!class_exists($modelName)) {

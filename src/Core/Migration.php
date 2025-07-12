@@ -41,6 +41,11 @@ abstract class Migration
         static::$prefix = $config->get('db_prefix', '');
     }
 
+    /**
+     * Migration constructor.
+     *
+     * @throws FrameworkException
+     */
     public function __construct()
     {
         $this->db = Utility::getDb($this->dbName);

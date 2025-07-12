@@ -1,6 +1,7 @@
 <?php
 
 use Loader\Container;
+use Logger\Log;
 use System\Core\Base\Model\Model;
 use System\Core\Test\TestCase;
 
@@ -27,6 +28,7 @@ class ModelTest extends TestCase
     protected $primary_key = 'id';
     protected $id = 1;
 
+    protected $db;
     public function testModelInitialization()
     {
         $model = $this->getMockForAbstractClass(Model::class);
@@ -37,11 +39,12 @@ class ModelTest extends TestCase
     {
         parent::setUp();
         // Use DummyModel to allow db injection
-        // $this->model = $this->getMockBuilder(DummyModel::class)
-        //     ->disableOriginalConstructor()
-        //     ->onlyMethods([])
-        //     ->getMock();
-        // $this->model->setDb($this->db);
+        $this->model = $this->getMockBuilder(DummyModel::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $this->db = $this->mockDb('default');
+        $this->model->setDb($this->db);
 
         $this->db->shouldReceive('from')->with($this->table)->andReturnSelf();
         $this->db->shouldReceive('where')->with([$this->primary_key => $this->id])->andReturnSelf();
@@ -62,6 +65,11 @@ class ModelTest extends TestCase
             ->andReturn(true);
 
         Container::set('db', $this->db);
+        Container::set('module', $this->moduleMock());
+        $logMock = Mockery::mock(Log::class);
+        $logMock->shouldReceive('info')->with(Mockery::any());
+        $this->context->shouldReceive('getLogger')
+            ->andReturn($logMock);
 
         $this->model = $this->getMockForAbstractClass(Model::class);
     }

@@ -24,11 +24,23 @@ class WebController extends Controller
         parent::__construct();
     }
 
+    /**
+     * Sets the view instance.
+     *
+     * @param View $view
+     *
+     * @return void
+     */
     public function setView(View $view): void
     {
         $this->view = $view;
     }
 
+    /**
+     * Gets the view instance.
+     *
+     * @return View
+     */
     public function getView(): View
     {
         return $this->view;

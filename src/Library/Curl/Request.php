@@ -21,7 +21,12 @@ class Request
         $this->ch = curl_init();
     }
 
-    // Set the URL for the request
+    /**
+     * Set the URL for the request.
+     *
+     * @param  string $url
+     * @return static
+     */
     public function setUrl($url)
     {
         $this->url = $url;
@@ -29,7 +34,12 @@ class Request
         return $this;
     }
 
-    // Set headers for the request
+    /**
+     * Set Headers for the request
+     *
+     * @param  array  $headers
+     * @return static
+     */
     public function setHeaders(array $headers)
     {
         $this->headers = $headers;
@@ -37,7 +47,12 @@ class Request
         return $this;
     }
 
-    // Set data (for POST, PUT, etc.)
+    /**
+     * Set the data for the request.
+     *
+     * @param  mixed  $data
+     * @return static
+     */
     public function setData($data)
     {
         $this->data = $data;
@@ -45,7 +60,12 @@ class Request
         return $this;
     }
 
-    // Set the request method (GET, POST, PUT, DELETE)
+    /**
+     * Set the request method (GET, POST, PUT, DELETE, etc.)
+     *
+     * @param  string $method
+     * @return static
+     */
     public function setRequestMethod($method)
     {
         $this->requestMethod = strtoupper($method);
@@ -53,6 +73,14 @@ class Request
         return $this;
     }
 
+    /**
+     * Magic method to handle dynamic method calls.
+     *
+     * @param string $method
+     * @param array  $args
+     *
+     * @return Response
+     */
     public function __call($method, $args)
     {
         $this->setData($args);
@@ -61,7 +89,11 @@ class Request
         return $this->execute();
     }
 
-    // Perform the cURL request
+    /**
+     * Execute the cURL request and return the response.
+     *
+     * @return Response
+     */
     public function execute()
     {
         curl_setopt($this->ch, CURLOPT_URL, $this->url);
@@ -117,19 +149,31 @@ class Request
         return new Response($body, $statusCode, $headers, $error, $errorCode);
     }
 
-    // Get the response from the cURL request
+    /**
+     * Get the response from the cURL request.
+     *
+     * @return Response|null
+     */
     public function getResponse()
     {
         return $this->response;
     }
 
-    // Get the error from the cURL request
+    /**
+     * Get the error message from the cURL request.
+     *
+     * @return string|null
+     */
     public function getError()
     {
         return $this->error;
     }
 
-    // Get the error code from the cURL request
+    /**
+     * Get the error code from the cURL request.
+     *
+     * @return int|null
+     */
     public function getErrorCode()
     {
         return $this->errorCode;

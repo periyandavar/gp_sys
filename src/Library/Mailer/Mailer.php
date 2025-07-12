@@ -30,7 +30,7 @@ class Mailer
         string $to,
         string $subject,
         string $layout,
-        array $data = null
+        ?array $data = null
     ) {
         $config = ConfigLoader::getConfig('config')->getAll();
         $path = $config['layout'] . '' . $layout;

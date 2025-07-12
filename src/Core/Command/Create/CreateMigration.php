@@ -2,8 +2,6 @@
 
 namespace System\Core\Command\Create;
 
-use Loader\Config\ConfigLoader;
-
 class CreateMigration extends Create
 {
     protected static string $name = 'create-migration';
@@ -42,14 +40,21 @@ class CreateMigration extends Create
         $this->createMigration($name);
         $this->showSuccess('Migration created successfully');
     }
+
+    /**
+     * Creates a new migration file.
+     *
+     * @param string $name
+     *
+     * @return void
+     */
     private function createMigration(string $name): void
     {
-        $migrationsDir = ConfigLoader::getConfig('config')->get('migrations', [])['migration_path'] ?? null;
+        $migrationConfig = $this->getConfig()->get('migration', []);
+        $migrationsDir = $migrationConfig['path'] ?? null;
 
         if (!$migrationsDir) {
-            $this->showError('Migration path is not configured');
-
-            return;
+            $this->error('Migration path is not configured');
         }
         $filePath = $migrationsDir . '/' . $name;
 
@@ -77,14 +82,12 @@ class CreateMigration extends Create
         }
 
         if (file_exists($filePath)) {
-            $this->showError("Migration file already exists: $filePath");
-
-            return;
+            $this->error("Migration file already exists: $filePath");
         }
 
         // Write the file
         if (file_put_contents($filePath, $content) === false) {
-            $this->showError("Failed to write migration file: $filePath");
+            $this->error("Failed to write migration file: $filePath");
         }
 
         $this->showSuccess("Migration file created: $filePath");

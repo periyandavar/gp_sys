@@ -1,18 +1,15 @@
-#!/usr/bin/env php.
+#!/usr/bin/env php
 <?php
 
+use Loader\Container;
 use System\App;
-use System\Core\Command\Init;
-use System\Core\Constants;
+use System\Core\Base\Context\ConsoleContext;
 
-require_once __DIR__ . '/../autoload.php';
-
-define('VALID_REQ', true);
-define('BASE_DIR', __DIR__ . '/../../');
-define('ENV', Constants::ENV_LOCAL);
-define('DS', DIRECTORY_SEPARATOR);
+define('APP_DIR', __DIR__);
+define('ENV', 'dev');
 define('SUPPRESS_SYSTEM_ERRORS', false);
 
+require_once __DIR__ . '/../vendor/autoload.php';
 
 array_shift($argv);
 $args = $argv;
@@ -31,11 +28,11 @@ if (empty($commandName)) {
 
 
 $toolCommands = [
-    'phpstan'      => BASE_DIR .'vendor/bin/phpstan',
-    'cs-fixer'     => BASE_DIR .'vendor/bin/php-cs-fixer',
-    'php-cs-fixer' => BASE_DIR .'vendor/bin/php-cs-fixer',
-    'test'         => BASE_DIR .'vendor/bin/phpunit',
-    'phpunit'      => BASE_DIR .'vendor/bin/phpunit',
+    'phpstan'      => 'vendor/bin/phpstan',
+    'cs-fixer'     => 'vendor/bin/php-cs-fixer',
+    'php-cs-fixer' => 'vendor/bin/php-cs-fixer',
+    'test'         => 'vendor/bin/phpunit',
+    'phpunit'      => 'vendor/bin/phpunit',
 ];
 
 $toolCommand = $toolCommands[$commandName] ?? null;
@@ -45,15 +42,16 @@ if (isset($toolCommand)) {
     exit;
 }
 
-if ($commandName != 'init') {
-    echo "Command $commandName is not available to run from this directory.\n";
-    echo "This script is intended to run the init command only which is used to initialize the system.\n";
-    echo "once the system is initialized, you can run commands from the console/run.php script.\n";
-    echo "Please run this command as console/run {$commandName} " . implode(' ', array_map('escapeshellarg', $args)) . "\n";
-    exit(1);
-}
+$context = ConsoleContext::getInstance( ENV, [
+    'command' => $commandName,
+    'action'  => array_shift($args),
+    'args'    => $args,
+]);
 
-$action = array_shift($args);
+Container::set('context', function() use ($context) {
+    return $context;
+}, true);
 
-$init = new Init();
-$init->execute();
+
+
+App::run();

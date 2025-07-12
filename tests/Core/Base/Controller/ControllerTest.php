@@ -1,38 +1,61 @@
 <?php
 
+use Loader\Container;
+use Loader\Load;
+use Loader\Loader;
+use Router\Request\Request;
 use System\Core\Base\Controller\Controller;
+use System\Core\Base\Log\Logger;
 use System\Core\Base\Model\Model;
+use System\Core\Base\Module\Module;
 use System\Core\Base\Service\Service;
-use System\Core\Test\TestCase;
+use System\Core\Test\TestCase as TestTestCase;
 
-class ControllerTest extends TestCase
+class ControllerTest extends TestTestCase
 {
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->mockDb();
+        // Mock dependencies for Container
+        $moduleMock = Mockery::mock(Module::class)->makePartial();
+        $loaderMock = Mockery::mock(Loader::class);
+        $moduleMock->shouldReceive('getLoader')->andReturn($loaderMock);
+        $moduleMock->shouldReceive('getContext')->andReturn($this->context);
+        $moduleMock->load = new Load();
+
+        Container::set('module', $moduleMock);
+        Container::set('request', $this->createMock(Request::class));
+        $logMock = Mockery::mock(Logger::class);
+        $logMock->shouldReceive('info')->with(Mockery::any())->andReturnNull();
+        $this->context->shouldReceive('getLogger')
+            ->andReturn($logMock);
+    }
+
     public function testControllerInitialization()
     {
-        $controller = $this->getMockForAbstractClass(Controller::class);
-        $this->assertInstanceOf(Controller::class, $controller);
-        $model = $this->getProperty($controller, 'model');
-        $this->assertInstanceOf(Model::class, $model);
-        $this->assertInstanceOf(Service::class, $this->getProperty($controller, 'service'));
+        $controller = new Controller();
+        $this->assertEquals(new Model(), $controller->getModel());
+        $this->assertEquals(new Service(), $controller->getService());
     }
 
-    public function testSetAndGetModel()
+    public function testSetModelAndService()
     {
-        $controller = $this->getMockForAbstractClass(Controller::class);
-        $mockModel = $this->createMock(Model::class);
-        $controller->setModel($mockModel);
-        $this->assertSame($mockModel, $this->getProperty($controller, 'model'));
+        $controller = new Controller();
+        $model = $this->createMock(Model::class);
+        $service = $this->createMock(Service::class);
+        $controller->setModel($model);
+        $controller->setService($service);
+        $this->assertSame($model, $controller->getModel());
+        $this->assertSame($service, $controller->getService());
     }
 
-    public function testSetAndGetService()
+    public function testMagicSetGetIsset()
     {
-        $controller = $this->getMockForAbstractClass(Controller::class);
-        $mockService = $this->createMock(Service::class);
-        $controller->setService($mockService);
-        $this->assertSame($mockService, $this->getProperty($controller, 'service'));
+        $controller = new Controller();
+        $controller->foo = 'bar';
+        $this->assertEquals('bar', $controller->foo);
+        $this->assertTrue(isset($controller->foo));
+        $this->assertFalse(isset($controller->notset));
     }
 }

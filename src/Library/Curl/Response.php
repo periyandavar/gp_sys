@@ -2,7 +2,6 @@
 
 namespace System\Library\Curl;
 
-use Logger\Log;
 use stdClass;
 use System\Core\Utility;
 
@@ -24,13 +23,17 @@ class Response
         $this->errorCode = $errorCode;
     }
 
-    // Get the response body
+    /**
+     * Get the body of the response.
+     */
     public function getBody()
     {
         return $this->body;
     }
 
-    // Get the HTTP status code of the response
+    /**
+     * Get the HTTP status code of the response.
+     */
     public function getStatusCode()
     {
         return $this->statusCode;
@@ -60,6 +63,12 @@ class Response
         return $this->statusCode >= 200 && $this->statusCode < 300;
     }
 
+    /**
+     * Convert the response body to a model.
+     *
+     * @param  string $modelClass
+     * @return mixed
+     */
     public function toModel($modelClass = '')
     {
         // Decode the JSON response to an array
@@ -81,23 +90,24 @@ class Response
         return $model;
     }
 
-    private function setUpClassObj($data, $modelClass)
+    /**
+     * Set up the class object with the response data.
+     *
+     * @param  array  $data
+     * @param  string $modelClass
+     * @return mixed
+     */
+    private function setUpClassObj(array $data, string $modelClass)
     {
         if (empty($modelClass) || !class_exists($modelClass)) {
-            // $data = [
-            //     'bookAuthor' => $data['bookAuthor']
-            // ];
-            // var_export(['out' => $this->convertToClasss(new \stdClass(), $data)]);
-            // exit;
-            return $this->convertToClasss(new \stdClass(), $data);
+            return $this->convertToClasss(new stdClass(), $data);
         }
 
         // Create an instance of the model
         $model = new $modelClass();
-        Log::getInstance()->info('llllllllllllll', [$data]);
         // Set the model attributes using the data from the response
         if (method_exists($model, 'setAttributes')) {
-            $model->setAttributes($data ?? []);
+            $model->setAttributes($data);
         } else {
             $model = $this->convertToClasss($model, $data);
         }
@@ -105,9 +115,15 @@ class Response
         return $model;
     }
 
+    /**
+     * Convert an associative array to a class object.
+     *
+     * @param  object       $model
+     * @param  array        $data
+     * @return object|array
+     */
     private function convertToClasss($model, $data)
     {
-        // var_export(['in' => $data]);//exit;
         if (! Utility::isAssociative($data)) {
             foreach ($data as $key => $value) {
                 if (is_array($value)) {
