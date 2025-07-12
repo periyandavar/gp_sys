@@ -1,13 +1,13 @@
 <?php
 
-use System\Core\Test\TestCase;
-use System\Core\Base\View\View;
-use System\Core\Base\View\ViewContent;
 use Loader\Config\ConfigLoader;
 use Loader\Container;
 use Router\Response\Response;
 use System\Core\Base\View\Content\DynamicContent;
 use System\Core\Base\View\Content\StaticContent;
+use System\Core\Base\View\View;
+use System\Core\Base\View\ViewContent;
+use System\Core\Test\TestCase;
 
 class ViewTest extends TestCase
 {
@@ -127,7 +127,7 @@ class ViewTest extends TestCase
     public function testToString()
     {
         $this->view->addStyle('style.css');
-        $output = (string)$this->view;
+        $output = (string) $this->view;
         $this->assertIsString($output);
     }
 

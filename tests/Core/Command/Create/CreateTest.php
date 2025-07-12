@@ -1,6 +1,5 @@
 <?php
 
-
 use System\Core\Command\Create\Create;
 use System\Core\Test\TestCase;
 

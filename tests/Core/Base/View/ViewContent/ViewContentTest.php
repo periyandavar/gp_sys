@@ -68,6 +68,7 @@ class ViewContentTest extends TestCase
         $ref = new ReflectionClass($object);
         $prop = $ref->getProperty($property);
         $prop->setAccessible(true);
+
         return $prop->getValue($object);
     }
 }

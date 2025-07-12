@@ -1,15 +1,25 @@
 <?php
 
-use System\Core\Test\TestCase;
 use System\Core\Base\Service\Service;
+use System\Core\Test\TestCase;
 
 class TestModel
 {
-    public function find($id) {}
-    public function all() {}
-    public function insert($data) {}
-    public function update($id, $data) {}
-    public function delete($id) {}
+    public function find($id)
+    {
+    }
+    public function all()
+    {
+    }
+    public function insert($data)
+    {
+    }
+    public function update($id, $data)
+    {
+    }
+    public function delete($id)
+    {
+    }
 }
 
 class ServiceTest extends TestCase
@@ -26,14 +36,14 @@ class ServiceTest extends TestCase
 
     public function testGetById()
     {
-        $this->model->shouldReceive('find')->with(1)->andReturn((object)['id' => 1]);
+        $this->model->shouldReceive('find')->with(1)->andReturn((object) ['id' => 1]);
         $result = $this->service->getById($this->model, 1);
-        $this->assertEquals((object)['id' => 1], $result);
+        $this->assertEquals((object) ['id' => 1], $result);
     }
 
     public function testGetAll()
     {
-        $expected = [(object)['id' => 1], (object)['id' => 2]];
+        $expected = [(object) ['id' => 1], (object) ['id' => 2]];
         $this->model->shouldReceive('all')->andReturn($expected);
         $result = $this->service->getAll($this->model);
         $this->assertEquals($expected, $result);
@@ -63,26 +73,26 @@ class ServiceTest extends TestCase
         $result = $this->service->delete($this->model, $id);
         $this->assertTrue($result);
     }
-public function testToObject()
-{
-    $data = ['id' => 1, 'name' => 'John'];
-    $object = $this->service->toObject($data);
-    $this->assertIsObject($object);
-    $this->assertEquals(1, $object->id);
-    $this->assertEquals('John', $object->name);
-}
+    public function testToObject()
+    {
+        $data = ['id' => 1, 'name' => 'John'];
+        $object = $this->service->toObject($data);
+        $this->assertIsObject($object);
+        $this->assertEquals(1, $object->id);
+        $this->assertEquals('John', $object->name);
+    }
 
-public function testToArrayOfObject()
-{
-    $data = [
-        ['id' => 1, 'name' => 'John'],
-        ['id' => 2, 'name' => 'Jane']
-    ];
-    $objects = $this->service->toArrayObjects($data);
-    $this->assertIsArray($objects);
-    $this->assertCount(2, $objects);
-    $this->assertIsObject($objects[0]);
-    $this->assertEquals('John', $objects[0]->name);
-    $this->assertEquals('Jane', $objects[1]->name);
-}
+    public function testToArrayOfObject()
+    {
+        $data = [
+            ['id' => 1, 'name' => 'John'],
+            ['id' => 2, 'name' => 'Jane']
+        ];
+        $objects = $this->service->toArrayObjects($data);
+        $this->assertIsArray($objects);
+        $this->assertCount(2, $objects);
+        $this->assertIsObject($objects[0]);
+        $this->assertEquals('John', $objects[0]->name);
+        $this->assertEquals('Jane', $objects[1]->name);
+    }
 }

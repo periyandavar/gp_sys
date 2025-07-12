@@ -121,7 +121,6 @@ final class Utility
     public static function getDb(string $name = 'default')
     {
         static $db = DatabaseFactory::get($name);
-        static $db = DatabaseFactory::get($name);
         if (!$db) {
             $dbConfig = ConfigLoader::getConfig('db');
             if (is_null($dbConfig)) {

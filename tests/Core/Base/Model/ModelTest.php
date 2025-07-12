@@ -7,7 +7,10 @@ use System\Core\Test\TestCase;
 class DummyModel extends Model
 {
     // Allow injecting a mock db for testing
-    public function setDb($db) { $this->db = $db; }
+    public function setDb($db)
+    {
+        $this->db = $db;
+    }
 }
 /**
  * @runInSeparateProcess
@@ -29,7 +32,6 @@ class ModelTest extends TestCase
         $model = $this->getMockForAbstractClass(Model::class);
         $this->assertInstanceOf(Model::class, $model);
     }
-
 
     public function setUp(): void
     {
@@ -59,7 +61,7 @@ class ModelTest extends TestCase
             ->with($this->table, [$this->primary_key => $this->id])
             ->andReturn(true);
 
-                Container::set('db', $this->db);
+        Container::set('db', $this->db);
 
         $this->model = $this->getMockForAbstractClass(Model::class);
     }
@@ -70,10 +72,7 @@ class ModelTest extends TestCase
 
     public function testFind()
     {
-
         $expected = ['name' => 'John'];
-
-        
 
         $result = $this->model->find($this->table, $this->id, $this->primary_key);
         $this->assertEquals($expected, $result);
@@ -100,7 +99,6 @@ class ModelTest extends TestCase
 
     public function testInsert()
     {
-        
         $result = $this->model->insert($this->table, $this->data);
         $this->assertTrue($result);
     }
@@ -112,7 +110,6 @@ class ModelTest extends TestCase
 
     public function testUpdate()
     {
-
         $result = $this->model->update($this->table, $this->id, $this->data, $this->primary_key);
         $this->assertTrue($result);
     }
@@ -123,8 +120,6 @@ class ModelTest extends TestCase
      */
     public function testDelete()
     {
-
-        
         $result = $this->model->delete($this->table, $this->id, $this->primary_key);
         $this->assertTrue($result);
     }

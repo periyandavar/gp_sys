@@ -5,7 +5,7 @@ namespace System\Core\Session;
 use Exception;
 use Loader\Config\ConfigLoader;
 use Logger\Log;
-use System\Core\Exception\FrameworkException;
+use System\Core\Constants;
 
 /**
  * Session class set and manage custom session handlers
