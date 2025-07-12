@@ -22,21 +22,24 @@ class Session
      */
     private function __construct()
     {
-        $config = ConfigLoader::getConfig('config')->getAll();
+        $config = ConfigLoader::getConfig(Constants::CONFIG)->getAll();
         try {
-            session_save_path($config['session_save_path']);
-            ini_set('session.gc_maxlifetime', $config['session_expiration']);
-            $file = 'src/system/core/session/'
-            . $config['session_driver']
-            . 'Session.php';
-            $class = $config['session_driver'] . 'session';
-            if (file_exists($file)) {
-                include_once "$file";
-                $class = "System\Core\\" . $class;
-                $this->_driver = new $class();
-            } else {
-                throw new FrameworkException('Invalid Driver', FrameworkException::INVALID_SESSION_ERROR);
+            $session_path = $config['session_save_path'] ?? '';
+            if (is_dir($session_path)) {
+                session_save_path($session_path);
             }
+            ini_set('session.gc_maxlifetime', $config['session_expiration'] ?? 36000);
+            $_driver = $config['session_driver'] ?? '';
+            if (empty($_driver)) {
+                return;
+            }
+            $_driver .= 'session';
+            if (class_exists($_driver)) {
+                $this->_driver = new $_driver();
+            } else {
+                Log::getInstance()->warning('Invalid Session Driver: ' . $_driver);
+            }
+
             if (isset($this->_driver)) {
                 session_set_save_handler(
                     [$this->_driver, 'open'],

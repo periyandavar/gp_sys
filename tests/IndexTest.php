@@ -5,6 +5,7 @@ use Router\Response\Response;
 
 class IndexTest extends TestCase
 {
+    private $appMock;
     protected function setUp(): void
     {
         // Mock the App class
