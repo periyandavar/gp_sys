@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Session
- * php version 7.3.5
- *
- */
-
 namespace System\Core\Session;
 
 use Exception;

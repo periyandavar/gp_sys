@@ -9,8 +9,11 @@ namespace System\Core;
 use Database\Database;
 use Database\DatabaseFactory;
 use Loader\Config\ConfigLoader;
+use Loader\Container;
+use Router\Request\Request;
 use SimpleXMLElement;
 use Symfony\Component\Yaml\Yaml;
+use System\Core\Exception\FrameworkException;
 
 /**
  * Utility Class offers various static functions
@@ -27,7 +30,7 @@ final class Utility
     {
         $config = ConfigLoader::getConfig('config');
 
-        return $config->get('base_url');
+        return $config->get('base_url', '');
     }
 
     /**
@@ -112,12 +115,18 @@ final class Utility
      *
      * @param  string        $name
      * @return Database|null
+     * @param  string        $name
+     * @return Database|null
      */
     public static function getDb(string $name = 'default')
     {
         static $db = DatabaseFactory::get($name);
         if (!$db) {
-            $dbConfig = ConfigLoader::getConfig('db')->getAll();
+            $dbConfig = ConfigLoader::getConfig('db');
+            if (is_null($dbConfig)) {
+                throw new FrameworkException('Db config not found');
+            }
+            $dbConfig = $dbConfig->getAll();
             DatabaseFactory::setUpConfig($dbConfig);
             $db = DatabaseFactory::get($name);
         }
@@ -197,5 +206,60 @@ final class Utility
 
         // Check if the keys are sequential (starting from 0, incrementing by 1)
         return $keys !== range(0, count($array) - 1);
+    }
+
+    public static function isStaticFile($file)
+    {
+        $staticFiles = [
+        'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico',
+        'webp', 'bmp', 'tiff', 'ttf', 'woff', 'woff2', 'eot', 'otf',
+        'map', 'json', 'xml', 'pdf', 'txt', 'csv', 'mp3', 'mp4', 'wav',
+        'ogg', 'webm', 'zip', 'tar', 'gz', 'rar', '7z', 'apk', 'exe',
+        'bin', 'wasm', 'avi', 'mov', 'flv', 'mkv'
+    ];
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+        return in_array($extension, $staticFiles);
+    }
+
+    public static function generateCsrfToken(): string
+    {
+        if (!isset($_SESSION['csrf_token'])) {
+            if (session_status() != PHP_SESSION_ACTIVE) {
+                return '';
+            }
+            /**
+             * @var Request $request
+             */
+            $request = Container::get(Request::class);
+            $token = bin2hex(random_bytes(32));
+            $request->setSession('csrf_token', $token);
+        }
+
+        return self::getCsrfToken();
+    }
+
+    public static function getCsrfToken(): ?string
+    {
+        /**
+         * @var Request $request
+         */
+        $request = Container::get(Request::class);
+
+        return $request->session('csrf_token', '');
+    }
+
+    /**
+     * Coalesce Array
+     *
+     * @param array      $array
+     * @param string|int $key
+     * @param mixed      $default
+     *
+     * @return mixed
+     */
+    public static function coalesceArray(array $array, $key, $default = null)
+    {
+        return $array[$key] ?? $default;
     }
 }
