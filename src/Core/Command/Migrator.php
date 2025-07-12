@@ -15,7 +15,7 @@ class Migrator extends Console
     /**
      * Define short and long options for getopt().
      */
-    protected function options(): array
+    public function options(): array
     {
         $options = parent::options();
         $options = array_merge($options, [

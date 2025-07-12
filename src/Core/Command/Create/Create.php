@@ -14,7 +14,7 @@ class Create extends Console
     /**
      * Define short and long options for getopt().
      */
-    protected function options(): array
+    public function options(): array
     {
         return [
             'help' => [
