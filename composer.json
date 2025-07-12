@@ -7,7 +7,7 @@
         "gp/loader": "^2.0.12",
         "gp/logger": "^0.0.4",
         "gp/router": "^1.0.3",
-        "gp/dbms": "^1.0.8",
+        "gp/dbms": "1.0.8",
         "gp/validator": "^1.0.7",
         "fpdf/fpdf": "^1.86"
     },
